@@ -13,7 +13,7 @@ var svg = canvas.append("svg")
 var receptive_field = canvas.append("img")
   .attr('width', 200)
   .attr('height', 100)
-  .attr("href", "https://github.com/mariakesa/mariakesa.github.io/blob/main/img/ensemble_rf/ensemble_rf_0.png")
+  .attr("src", "https://github.com/mariakesa/mariakesa.github.io/blob/main/img/ensemble_rf/ensemble_rf_0.png")
 
 svg.selectAll("rect")
     .data(d3.range(x * y))
@@ -33,5 +33,5 @@ function mouseover(d) {
       d3.select(this)
       console.log(d)
       image=d3.select("img")
-        .attr("href", "https://github.com/mariakesa/mariakesa.github.io/blob/main/img/ensemble_rf/ensemble_rf_"+d+".png")
+        .attr("src", "https://github.com/mariakesa/mariakesa.github.io/blob/main/img/ensemble_rf/ensemble_rf_"+d+".png")
     }
