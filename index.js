@@ -11,6 +11,7 @@ var svg = canvas.append("svg")
     .attr("height", h);
 
 var receptive_field = canvas.append("img")
+  .attr('id', "receptive_field")
   .attr('width', 300)
   .attr('height', 300)
   .attr("src", "./img/ensemble_rf/ensemble_rf_0.png")
@@ -32,6 +33,6 @@ function translate(d) {
 function mouseover(d) {
       d3.select(this)
       console.log(d)
-      image=d3.select("img")
+      image=d3.select("#receptive_field")
         .attr("src", "./img/ensemble_rf/ensemble_rf_"+d+".png")
     }
