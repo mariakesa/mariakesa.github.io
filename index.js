@@ -11,8 +11,8 @@ var svg = canvas.append("svg")
     .attr("height", h);
 
 var receptive_field = canvas.append("img")
-  .attr('width', 100)
-  .attr('height', 100)
+  .attr('width', 300)
+  .attr('height', 300)
   .attr("src", "./img/ensemble_rf/ensemble_rf_0.png")
 
 svg.selectAll("rect")
