@@ -32,15 +32,15 @@
 
 @font-face {
     font-family: 'azedobold';
-    src: url('../fonts/azedo-bold-webfont.eot');
-    src: url('../fonts/azedo-bold-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/azedo-bold-webfont.woff2') format('woff2'), url('../fonts/azedo-bold-webfont.woff') format('woff'), url('../fonts/azedo-bold-webfont.ttf') format('truetype'), url('../fonts/azedo-bold-webfont.svg#azedobold') format('svg');
+    src: url('/fonts/azedo-bold-webfont.eot');
+    src: url('/fonts/azedo-bold-webfont.eot?#iefix') format('embedded-opentype'), url('/fonts/azedo-bold-webfont.woff2') format('woff2'), url('/fonts/azedo-bold-webfont.woff') format('woff'), url('/fonts/azedo-bold-webfont.ttf') format('truetype'), url('/fonts/azedo-bold-webfont.svg#azedobold') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 @font-face {
     font-family: 'azedolight';
-    src: url('../fonts/azedo-light-webfont.eot');
-    src: url('../fonts/azedo-light-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/azedo-light-webfont.woff2') format('woff2'), url('../fonts/azedo-light-webfont.woff') format('woff'), url('../fonts/azedo-light-webfont.ttf') format('truetype'), url('../fonts/azedo-light-webfont.svg#azedolight') format('svg');
+    src: url('/fonts/azedo-light-webfont.eot');
+    src: url('/fonts/azedo-light-webfont.eot?#iefix') format('embedded-opentype'), url('/fonts/azedo-light-webfont.woff2') format('woff2'), url('/fonts/azedo-light-webfont.woff') format('woff'), url('/fonts/azedo-light-webfont.ttf') format('truetype'), url('/fonts/azedo-light-webfont.svg#azedolight') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -3126,7 +3126,6 @@ a img.aligncenter {
 .alert-danger .alert-link {
   color: #d2d2d2;
 }
-
 .slider-description-inner h1 {
     font-family: 'azedobold';
     font-size: 60px;
