@@ -15,6 +15,7 @@ var receptive_field = canvas.append("img")
   .attr('width', 300)
   .attr('height', 300)
   .attr("src", "./img/ensemble_rf/ensemble_rf_0.png")
+  .attr('align','center')
 
 svg.selectAll("rect")
     .data(d3.range(x * y))
@@ -24,6 +25,7 @@ svg.selectAll("rect")
     .attr("height", z)
     .style("fill", function(d) { return d3.hsl(d % x / x * 360, 1, Math.floor(d / x) / y); })
     .on("click", mouseover);
+
 
 
 function translate(d) {
