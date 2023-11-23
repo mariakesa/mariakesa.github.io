@@ -3,18 +3,35 @@
 <head>
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="./css/styles.css">
-
-</head>
-
-
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300&display=swap" rel="stylesheet">
 <body>
 	<h1 id="title"> Neural Data <span id="title-span">Science</span></h1>
-	<div id="slider-ef" class="slider-images-wrapper">
-			<img class="img-responsive" src="img/neuron_logo.png">
+
+	<div class="canvas"></div>
+	<script src="index.js"></script>
+
+	<div class="intro-text">
+		Hi! My name is Maria. I want to write a book
+		on neural data analysis (calcium imaging, NeuroPixel probe data)
+		with Javascript based interactive elements. In my day job,
+		I'm a machine learning engineer working on applying
+		Natural Language Processing
+		algorithms (ie Transformers) to legal and police data. 
+		
 	</div>
 
-	<div class="canvas container"></div>
-	<script src="https://d3js.org/d3.v5.min.js"></script>
-	<script src="index.js"></script>
+	<div class="intro-text">
+		The images above show the sensitivity pattern
+		to stimuli in the visual space of groups
+		of neurons in the primary visual cortex (V1)
+		of the mouse. Images that the mice were
+		viewing were regressed against these
+		neural activity components to visualize
+		the ensemble receptive fields of cortical
+		cells.
+	</div>
 </body>
 </html>

@@ -14,6 +14,7 @@
     font-style: normal;
 }
 
+
 #title {
     font-family: 'azedobold';
     font-size: 60px;
@@ -27,4 +28,12 @@
     font-weight: 100;
     margin-left: 10px;
     line-height: 80px;
+}
+
+.intro-text {
+    font-family: 'Merriweather', sans-serif; /* Specify a fallback sans-serif font */
+    font-size: 22px;
+    display: block;
+    width: 800px;
+    padding-bottom: 50px;
 }
