@@ -1,0 +1,30 @@
+@font-face {
+    font-family: 'azedobold';
+    src: url('../fonts/azedo-bold-webfont.eot');
+    src: url('../fonts/azedo-bold-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/azedo-bold-webfont.woff2') format('woff2'), url('../fonts/azedo-bold-webfont.woff') format('woff'), url('../fonts/azedo-bold-webfont.ttf') format('truetype'), url('../fonts/azedo-bold-webfont.svg#azedobold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'azedolight';
+    src: url('../fonts/azedo-light-webfont.eot');
+    src: url('../fonts/azedo-light-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/azedo-light-webfont.woff2') format('woff2'), url('../fonts/azedo-light-webfont.woff') format('woff'), url('../fonts/azedo-light-webfont.ttf') format('truetype'), url('../fonts/azedo-light-webfont.svg#azedolight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#title {
+    font-family: 'azedobold';
+    font-size: 60px;
+    letter-spacing: 8px;
+}
+
+#title-span {
+    font-family: 'azedolight';
+    background: #ffcc00;
+    padding: 22px;
+    font-weight: 100;
+    margin-left: 10px;
+    line-height: 80px;
+}
