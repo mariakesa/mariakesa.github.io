@@ -68,7 +68,7 @@ const chart = async () => {
 
     svg
         .append("g")
-        .attr("fill", "steelblue")
+        .attr("fill", "lightblue")
         .selectAll("rect")
         .data(bins)
         .join("rect")
