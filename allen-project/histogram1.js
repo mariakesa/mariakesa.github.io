@@ -3,7 +3,7 @@ const loadAndProcessData = async () => {
     const url = "https://raw.githubusercontent.com/mariakesa/mariakesa.github.io/main/allen-project/data/scores.json";
     const data = await d3.json(url);
     const scores = Object.values(data);
-    const bins = d3.histogram().thresholds(40)(scores); // Use d3.histogram instead of d3.bin
+    const bins = d3.histogram().thresholds(30)(scores); // Use d3.histogram instead of d3.bin
     return bins;
 };
 
