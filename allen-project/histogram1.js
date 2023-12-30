@@ -9,8 +9,8 @@ const loadAndProcessData = async () => {
 
 // Define the function to set up parameters
 const makeParameters = () => {
-    const width = 600;
-    const height = 500;
+    const width = 800;
+    const height = 600;
     const margin = { top: 20, right: 20, bottom: 40, left: 40 };
     const barPadding = 1;
     const yAccessor = (d) => d.length;
@@ -52,7 +52,13 @@ const chart = async () => {
     const { xScale, yScale } = makeScales(bins, margin, width, height);
 
     // Create the chart and append it to the body
-    const svg = d3.create("svg").attr("viewBox", [0, 0, width, height]);
+    //const svg = d3.create("svg").attr("viewBox", [0, 0, width, height]);
+    const svg = d3.select("#my_histogram")
+        .append("svg")
+        .attr("viewBox", `0 0 1000 800`)
+        .attr("width", width)
+        .attr("height", height);
+    //.attr("preserveAspectRatio", "xMidYMid meet");
 
     svg.append("g").call((g) => yGrid(g, yScale, width, margin)); // Pass yScale, width, and margin
 
@@ -88,9 +94,27 @@ const chart = async () => {
 
     svg.append("g").call(d3.axisBottom(xScale)); // Add x-axis
     svg.append("g").call(d3.axisLeft(yScale)); // Add y-axis
-
+    
+    console.log(svg.node())
     return svg.node();
 };
 
+const main = async () => {
+    // Load and process the data
+    const bins = await loadAndProcessData();
+
+    // Make parameters
+    const { width, height, margin, barPadding, yAccessor } = makeParameters();
+
+    // Make scales
+    const { xScale, yScale } = makeScales(bins, margin, width, height);
+
+    
+
+    // Create the chart and append it to the body
+    //document.body.appendChild(chart());
+    chart().then((chartNode) => document.body.appendChild(chartNode));
+};
+
 // Call the chart function
-chart().then((chartNode) => document.body.appendChild(chartNode));
+//chart().then((chartNode) => document.body.appendChild(chartNode));

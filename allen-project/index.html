@@ -50,28 +50,14 @@
         </tr>
     </table>
 
-
+    <div id="container" class="svg-container">
+      <svg id="my_histogram"></svg>
+    </div>
+    
     <script>
-      // Ensure that you have the necessary functions (yGrid, xAxis, yAxis) and dependencies in histogram1.js
-  
-      // Define an async function to wrap the script
-      const main = async () => {
-          // Load and process the data
-          const bins = await loadAndProcessData();
-  
-          // Make parameters
-          const { width, height, margin, barPadding, yAccessor } = makeParameters();
-  
-          // Make scales
-          const { xScale, yScale } = makeScales(bins, margin, width, height);
-  
-          // Create the chart and append it to the body
-          document.body.appendChild(chart(bins, { width, height, margin, barPadding, yAccessor, xScale, yScale }));
-      };
-  
-      // Call the async function
+      // Call the main function to construct the histogram and append it to the SVG element
       main();
-  </script>
+    </script>
   
 
     <h3>References</h3>
