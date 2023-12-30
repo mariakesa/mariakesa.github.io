@@ -3,14 +3,14 @@ const loadAndProcessData = async () => {
     const url = "https://raw.githubusercontent.com/mariakesa/mariakesa.github.io/main/allen-project/data/scores.json";
     const data = await d3.json(url);
     const scores = Object.values(data);
-    const bins = d3.histogram().thresholds(30)(scores); // Use d3.histogram instead of d3.bin
+    const bins = d3.histogram().thresholds(40)(scores); // Use d3.histogram instead of d3.bin
     return bins;
 };
 
 // Define the function to set up parameters
 const makeParameters = () => {
-    const width = 300;
-    const height = 250;
+    const width = 600;
+    const height = 500;
     const margin = { top: 20, right: 20, bottom: 40, left: 40 };
     const barPadding = 1;
     const yAccessor = (d) => d.length;
@@ -64,6 +64,7 @@ const chart = async () => {
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
         .attr("font-family", "sans-serif")
+        .text("N neurons: 0");
 
     svg
         .append("g")
@@ -78,9 +79,11 @@ const chart = async () => {
         .on("mouseover", function (d, i) {
             console.log(i);
             d3.select(this).attr("style", "fill: orange;");
+            d3.select("#toptext").text(`N neurons: ${i.length}`);
         })
         .on("mouseout", function () {
             d3.select(this).attr("style", "outline: thin solid clear;");
+            d3.select("#toptext").text("N neurons: 0");
         });
 
     svg.append("g").call(d3.axisBottom(xScale)); // Add x-axis
