@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction</title>
+</head>
+<body>
+
+    <h1>Directions in Vision Transformer encoder image embedding space precisely predict single neuron activity in mouse visual cortex</h1>
+
+    <h3>Introduction</h3>
+    
+        <p>
+            Transformers are a class of deep learning models that employ an algorithmic innovation called the attention mechanism
+            to alter representations of sequence elements according to other elements that appear in the sequence. 
+            Originally invented for natural language applications 
+            in machine translation, they were ported to the computer vision domain 2021(1). The original Vision Transformer is an encoder
+            that models an image as a sequence of non-overlapping flattened patches. 
+        </p>
+
+        <p> Universal image representation from which information can be decoded</p>
+
+        Nowadays, these motivations are synergistic—experimental neuroscientists are providing new clues and constraints about the algorithmic solution at work in the brain, and computational neuroscientists seek to integrate these clues to produce hypotheses (a.k.a. algorithms) that can be experimentally distinguished. 
+
+        Surya Ganguli, Ila Fiete papers on learning rules
+        <table>
+            <tr>
+              <th>Model</th>
+              <th>Training data</th>
+              <th>Pre-training  method</th>
+            </tr>
+            <tr>
+              <td>Original Vision Transformer, vit-base-patch32-384</td>
+              <td>ImageNet-21k, JFT-300M, finetuned on ImageNet-1k</td>
+              <td>Supervised classification</td>
+            </tr>
+            <tr>
+              <td>DINO-vitb8</td>
+              <td>ImageNet-1k</td>
+              <td>Self-supervised</td>
+            <tr>
+                <td>CLIP-vit-base-patch32</td>
+                <td>400 million image-text pairs collected from the internet</td>
+                <td>Supervised- predict which caption goes with which image</td>
+            </tr>
+          </table>
+
+
+    <h3>References</h3>
+    <p>Radford, A., et al. Learning Transferable Visual Models From Natural Language Supervision.
+        https://arxiv.org/pdf/2103.00020.pdf
+    </p>
+    <p>DiCarlo, J., et al. How Does the Brain Solve Visual Object Recognition? Neuron</p>
+    <p>https://www.biorxiv.org/content/10.1101/2021.06.16.448730v5</p>
+
+    
+</body>
+</html>
