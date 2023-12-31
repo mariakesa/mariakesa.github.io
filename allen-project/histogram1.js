@@ -100,20 +100,15 @@ const chart = async () => {
 };
 
 const main = async () => {
-    // Load and process the data
-    const bins = await loadAndProcessData();
-
-    // Make parameters
-    const { width, height, margin, barPadding, yAccessor } = makeParameters();
-
-    // Make scales
-    const { xScale, yScale } = makeScales(bins, margin, width, height);
-
     
 
     // Create the chart and append it to the body
     //document.body.appendChild(chart());
-    chart().then((chartNode) => document.body.appendChild(chartNode));
+    //const chartNode = await chart();
+
+    // Append the chart to the SVG element with ID "my_histogram" within the "container" div
+    //d3.select("#my_histogram").node().appendChild(chartNode);
+    chart().then((chartNode) => document.body.querySelector('#my_histogram').appendChild(chartNode));
 };
 
 // Call the chart function
