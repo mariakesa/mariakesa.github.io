@@ -6,6 +6,7 @@
     <title>Introduction</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="histogram1.js"></script>
+    <script src="embedding_illustration.js"></script>
 </head>
 <body>
     <img src="img/Chica uurib asja, Päikesekiireke tatsab ülakorrusel.gif" height="300">
@@ -27,6 +28,10 @@
         Nowadays, these motivations are synergistic—experimental neuroscientists are providing new clues and constraints about the algorithmic solution at work in the brain, and computational neuroscientists seek to integrate these clues to produce hypotheses (a.k.a. algorithms) that can be experimentally distinguished.
         Surya Ganguli, Ila Fiete papers on learning rules
     </p>
+
+    <div id="show_embeddings">
+      <svg id="embedding_plot" width="800" height="600"></svg>
+    </div>
 
     <table>
         <tr>
@@ -55,9 +60,11 @@
       <svg id="my_histogram" width="800" height="600"></svg>
     </div>
 
+
     <script>
       // Call the main function to construct the histogram and append it to the SVG element
       main();
+
     </script>
   
 
