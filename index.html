@@ -7,6 +7,26 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300&display=swap" rel="stylesheet">
+		<style>
+			/* Add CSS styles for the modal */
+			.modal {
+				display: none;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background-color: #f0f0f0;
+				padding: 20px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+			}
+	
+			.modal img {
+				width: 100%;
+				height: auto;
+			}
+		</style>
 <body>
 	<h1 id="title"> Neural Data <span id="title-span">Science</span></h1>
 
@@ -18,7 +38,7 @@
 		a self-study MSc thesis on calcium imaging
 		and Neuropixel probe data analysis, focusing
 		on mouse vision. You
-		can follow the progress <a href="allen-project">here</a>. In my day job,
+		can follow the progress <a id="allen_project" href="allen-project">here</a>. In my day job,
 		I'm a machine learning engineer working on applying
 		Natural Language Processing
 		algorithms (ie Transformers) to legal and police data. 
@@ -35,5 +55,26 @@
 		the ensemble receptive fields of cortical
 		cells.
 	</div>
+
+	<div id="modal" class="modal">
+        <img src="https://raw.githubusercontent.com/mariakesa/mariakesa.github.io/main/allen-project/img/rastermap_final.png" alt="Modal Image">
+    </div>
+
+    <script>
+        // Get the anchor tag and the modal element
+        var anchor = document.getElementById("allen_project");
+        var modal = document.getElementById("modal");
+
+        // Add event listeners for hover
+        anchor.addEventListener("mouseenter", function () {
+            // Show the modal on hover
+            modal.style.display = "block";
+        });
+
+        anchor.addEventListener("mouseleave", function () {
+            // Hide the modal when not hovering
+            modal.style.display = "none";
+        });
+    </script>
 </body>
 </html>
