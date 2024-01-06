@@ -29,9 +29,19 @@
         Surya Ganguli, Ila Fiete papers on learning rules
     </p>
 
-    <div id="show_embeddings">
+    <!--<div id="show_embeddings">
       <svg id="embedding_plot" width="800" height="600"></svg>
-    </div>
+    </div>-->
+
+    <script type="module">
+      importScripts('https://pyodide-cdn2.iodide.io/v0.16.1/full/pyodide.js').then(() => {
+          const preGeneratedDataUrl = '...';  // Replace with your pre-generated data URL
+
+          const img = new Image();
+          img.src = preGeneratedDataUrl;
+          document.body.appendChild(img);
+      });
+    </script>
 
     <table>
         <tr>
