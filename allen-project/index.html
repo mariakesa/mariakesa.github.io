@@ -7,6 +7,8 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="histogram1.js"></script>
     <script src="embedding_illustration.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.js"></script>
+    <script src="test.js"></script>
 </head>
 <body>
     <img src="img/Chica uurib asja, Päikesekiireke tatsab ülakorrusel.gif" height="300">
@@ -29,20 +31,53 @@
         Surya Ganguli, Ila Fiete papers on learning rules
     </p>
 
+    <script type="module">
+      // Your pre-generated data URL (replace with the actual URL)
+      const preGeneratedDataUrl = 'https://raw.githubusercontent.com/mariakesa/mariakesa.github.io/main/allen-project/img/rastermap_test.png';
+
+      // Function to run Python code using Pyodide
+      async function runPyodideCode() {
+          // Load Pyodide
+          let pyodide = await loadPyodide();
+
+          // Load matplotlib-pyodide backend
+          await pyodide.loadPackage("matplotlib");
+
+          // Set the matplotlib backend to wasm_backend
+          pyodide.runPython(`
+              import matplotlib
+              matplotlib.use("module://matplotlib.backends.backend_wasm")
+          `);
+
+          // Python code to display the image using Matplotlib
+          const pythonCode = `
+              import base64
+              import matplotlib.pyplot as plt
+              import numpy as np
+              from io import BytesIO
+
+              data_url = '${preGeneratedDataUrl}'
+              img_data = base64.b64decode(data_url.split(',')[1])
+              image = plt.imread(BytesIO(img_data))
+
+              plt.imshow(image)
+              plt.axis('off')
+              plt.show()
+          `;
+
+          // Run Python code using Pyodide
+          await pyodide.runPythonAsync(pythonCode);
+      }
+
+      // Attach the function to the global window object
+      window.runPyodideCode = runPyodideCode;
+
+      // Call the function when the script is loaded
+      runPyodideCode();
+  </script>
     <!--<div id="show_embeddings">
       <svg id="embedding_plot" width="800" height="600"></svg>
     </div>-->
-
-    <script type="module">
-      importScripts('https://pyodide-cdn2.iodide.io/v0.16.1/full/pyodide.js').then(() => {
-          const preGeneratedDataUrl = '...';  // Replace with your pre-generated data URL
-
-          const img = new Image();
-          img.src = preGeneratedDataUrl;
-          document.body.appendChild(img);
-      });
-    </script>
-
     <table>
         <tr>
           <th>Model</th>
@@ -74,7 +109,7 @@
     <script>
       // Call the main function to construct the histogram and append it to the SVG element
       main();
-
+      random_im();
     </script>
   
 
