@@ -4,19 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .text {
+            max-width: 600px; /* Adjust the width as needed */
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
     <h3>Progress report: 30.01.2024</h3>
         <h4>Introduction</h4>
-            <p>
+            <p class="text">
                 Deep neural networks learn representations of stimuli. This is 
                 convenient for visual neuroscience, firstly because the images
                 and movies presented to an animal can be transformed so that we
                 can study p(response|f(stimulus)) instead of p(response|stimulus).
-                If a neural network can disentangle a visual stimulus from 
-                pixel space to another vector space where dimensions have (James DiCarlo)
-                some semantic or ethological such that information of interest
-                can be easily (linearly) decoded from this representation. 
+                Neural networks map visual stimuli from pixel space to another vector 
+                space such that information of interest can be easily (linearly) decoded 
+                from this representation. This means that they disentangle information
+                in the pixel space of the image into dimensions that have some semantic
+                or (as we speculate) ethological meaning. Deep neural networks are convenient
+                models, because we can obtain these re-representations of stimuli by 
+                simply training a model to minimize a cost function on a task. Some tasks
+                such as self-supervised learning don't even require labeled data! 
             </p>
         <h5>Literature</h5>
             <p></p>
