@@ -22,12 +22,13 @@
                 can study p(response|f(stimulus)) instead of p(response|stimulus).
                 Neural networks map visual stimuli from pixel space to another vector 
                 space where information of interest can be easily (linearly) decoded 
-                from the representation. This means that they disentangle information (James Dicarlo)
-                from the pixel space into dimensions that have some semantic
-                or (as we speculate) ethological meaning (InfoGAN paper). Deep neural networks are convenient
-                models, because we can obtain these re-representations of stimuli by 
-                simply training a model to minimize a cost function on a task. Some tasks
-                (such as self-supervised learning and adversarial learning) don't even require human annotated data! 
+                from the representation. This is called disentanglement (James Dicarlo) and it 
+                simplifies our life immensely, because we can obtain re-representations of stimuli by 
+                simply training a model to minimize a cost function on a task. Some forms of learning
+                (such as self-supervised learning and adversarial learning) don't even require human annotated data!
+                This is great for neuroscience, because if we know that a neural network can achieve
+                object recognition then the representations that it learns may be ethologically
+                relevant for primate vision. 
             </p>
 
             <img src="./img/Screenshot from 2024-01-30 01-51-26.png" width="500" height="300">
@@ -41,10 +42,16 @@
                 Ever since the original AlexNet paper that achieved state of the art on ImageNet, these
                 models have been used extensively to study biological object recognition. However, ConvNets
                 have an inductive bias which helps in low and medium data setting, but hinders their performance
-                in the massive data regime. Specifically, ConvNets have localized receptive fields and have difficulty
-                integrating information that spans the entire image. 
-
+                in the massive data regime. Specifically, ConvNets have localized receptive fields and therefore
+                have difficulty
+                integrating information that spans multiple parts of the image. In the language of statistical learning,
+                these models have a bias problem (they are too simple to capture
+                complex dependencies that are necessary for some tasks). In the abundant data and 
+                compute resource regime another architecture-- the Transformer-- has beat ConvNets on computer vision 
+                benchmarks. 
             </p>
+            <img src="./img/Convolution_arithmetic_-_Full_padding_no_strides_transposed.gif" width="200" height="100">
+            <p></p>
         <h5>Literature</h5>
             <p></p>
 </body>
