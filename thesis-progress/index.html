@@ -6,7 +6,7 @@
     <title>Document</title>
     <style>
         .text {
-            max-width: 600px; /* Adjust the width as needed */
+            max-width: 600px; 
             text-align: left;
         }
     </style>
@@ -17,16 +17,33 @@
             <p class="text">
                 Deep neural networks learn representations of stimuli. This is 
                 convenient for visual neuroscience, firstly because the images
-                and movies presented to an animal can be transformed so that we
+                and movies presented to an animal can be transformed with
+                neural networks so that we
                 can study p(response|f(stimulus)) instead of p(response|stimulus).
                 Neural networks map visual stimuli from pixel space to another vector 
-                space such that information of interest can be easily (linearly) decoded 
-                from this representation. This means that they disentangle information
-                in the pixel space of the image into dimensions that have some semantic
-                or (as we speculate) ethological meaning. Deep neural networks are convenient
+                space where information of interest can be easily (linearly) decoded 
+                from the representation. This means that they disentangle information (James Dicarlo)
+                from the pixel space into dimensions that have some semantic
+                or (as we speculate) ethological meaning (InfoGAN paper). Deep neural networks are convenient
                 models, because we can obtain these re-representations of stimuli by 
                 simply training a model to minimize a cost function on a task. Some tasks
-                such as self-supervised learning don't even require labeled data! 
+                (such as self-supervised learning and adversarial learning) don't even require human annotated data! 
+            </p>
+
+            <img src="./img/Screenshot from 2024-01-30 01-51-26.png" width="500" height="300">
+            <p class="text">Figure 1. InfoGAN learns disentangled representations where variation
+                along particular dimensions of a seed vector
+                determines high-level properties such as emotion and the presence of glasses 
+                in generated images(infoGAN)
+            </p>
+            <p class="text">
+                The utility of Convolutional Neural Networks (ConvNets) is well established in neuroscience.
+                Ever since the original AlexNet paper that achieved state of the art on ImageNet, these
+                models have been used extensively to study biological object recognition. However, ConvNets
+                have an inductive bias which helps in low and medium data setting, but hinders their performance
+                in the massive data regime. Specifically, ConvNets have localized receptive fields and have difficulty
+                integrating information that spans the entire image. 
+
             </p>
         <h5>Literature</h5>
             <p></p>
