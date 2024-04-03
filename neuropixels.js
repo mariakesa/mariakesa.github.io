@@ -3,6 +3,7 @@ export function createScatterPlot(chartElement) {
     fetch('/data/neuropixel_probe_locs.json')
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             const width = 1000;
             const height = 600;
             const imageWidth = 600; // Fixed width for the image
@@ -31,8 +32,12 @@ export function createScatterPlot(chartElement) {
                 .attr('fill', '#34ebb7')
                 .attr('opacity', 0.5);
 
-            circles.on('mouseover', async (event, d) => {
+            circles.on('mouseover', async (event, index) => {
+                const d = data[index];
                 const imageSrc = `/brainwide-neuropixels-vis/${encodeURIComponent(d.image_filename)}`;
+                //console.log('Image source:', imageSrc); // Log the image source for debugging
+                //console.log(data);
+                //console.log(data[d]);
                 const imageBlob = await fetch(imageSrc).then((response) => response.blob());
                 const imageUrl = URL.createObjectURL(imageBlob);
                 updateImage(imageUrl);
