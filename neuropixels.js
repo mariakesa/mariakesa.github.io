@@ -1,9 +1,12 @@
 export function createScatterPlot(chartElement) {
+    let updateImage; // Define updateImage function outside of the fetch callback
+    let data; // Define data variable in a higher scope
 
     fetch('/data/neuropixel_probe_locs.json')
         .then(response => response.json())
-        .then(data => {
-            console.log(data);
+        .then(dataResponse => {
+            data = dataResponse; // Assign data from the fetch response to the higher scoped variable
+
             const width = 1000;
             const height = 600;
             const imageWidth = 600; // Fixed width for the image
@@ -33,34 +36,39 @@ export function createScatterPlot(chartElement) {
                 .attr('opacity', 0.5);
 
             circles.on('mouseover', async (event, index) => {
-                const d = data[index];
+                const d = data[index]; // Retrieve the data point corresponding to the index
                 const imageSrc = `/brainwide-neuropixels-vis/${encodeURIComponent(d.image_filename)}`;
-                //console.log('Image source:', imageSrc); // Log the image source for debugging
-                //console.log(data);
-                //console.log(data[d]);
+                console.log('Image source:', imageSrc); // Log the image source for debugging
                 const imageBlob = await fetch(imageSrc).then((response) => response.blob());
                 const imageUrl = URL.createObjectURL(imageBlob);
                 updateImage(imageUrl);
             });
 
+            // Position the scatter plot and image side by side
+            const scatterPlotLeft = 100; // Left position for the scatter plot
+            const scatterPlotTop = 1000; // Top position for the scatter plot
+            const imageLeft = width - imageWidth + scatterPlotLeft; // Left position for the image
+            const imageTop = scatterPlotTop; // Top position for the image
+
+            // Append the image container
             const imageSvg = d3
                 .select(chartElement)
                 .append('svg')
                 .attr('width', imageWidth)
                 .attr('height', imageHeight)
                 .style('position', 'absolute')
-                .style('left', `${width - imageWidth}`)
-                .style('top', `${height / 2 - imageHeight / 6}`)
+                .style('left', `${imageLeft}px`)
+                .style('top', `${imageTop}px`)
                 .attr('class', 'image-container');
 
             const imageElement = imageSvg
                 .append('image')
                 .attr('x', 0)
                 .attr('y', 0)
-                .attr('width', '80%')
-                .attr('height', '80%');
+                .attr('width', '100%') // Adjust the width of the image to fill its container
+                .attr('height', '100%'); // Adjust the height of the image to fill its container
 
-            const updateImage = (src) => {
+            updateImage = (src) => { // Assign the function to updateImage variable
                 imageElement.attr('xlink:href', src);
             };
         })
