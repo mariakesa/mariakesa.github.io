@@ -5,28 +5,47 @@
     <title>Linear Algebra Tutorial</title>
     <!-- Include D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- Include scalar.js -->
+    <!-- Include Scripts -->
     <script src="scalar1.js" defer></script>
     <script src="vector.js" defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1> Basics of Linear Algebra </h1>
-    <div>Linear algebra is a language that consists of operations on arrays of numbers. </div>
-    <h3>Scalars</h3>
-    <div>The simplest possible array of numbers is simply a single number.</div>
-    <div>This array is called a <b>scalar</b>. It is a <b>0-dimensional</b> array, because
-    it doesn't vary along any dimension (it consists of only one element).</div>
-    <!-- Container for the scalar visualization and buttons -->
-    <div id="scalar-container">
-        <!-- SVG and buttons will be appended here by scalar.js -->
-    </div>
-    <h3>Operations on scalars</h3>
-    <h4>Addition and subtraction</h4>
-    <h4>Scalar multiplication</h4>
-    <h4>Linear combination</h4>
+    <h1>Basics of Linear Algebra</h1>
 
-    <h3>Vectors</h3>
-    <div id="vector-container"></div>
+    <!-- Step 1: Introduction -->
+    <div class="step-container" id="step-1">
+        <div>Linear algebra is a language that consists of operations on arrays of numbers.</div>
+        <p>
+            We will start by looking at the simplest concept: <b>scalars</b>.
+            A scalar is just a single number — a <b>0-dimensional</b> array.
+        </p>
+        <div id="scalar-container"></div>
+        <!-- A button to move to the next section once user is done exploring scalars -->
+        <button class="next-button" data-next-step="step-2">Next</button>
+    </div>
+
+    <!-- Step 2: Operations on Scalars -->
+    <div class="step-container" id="step-2">
+        <h3>Operations on scalars</h3>
+        <h4>Addition and subtraction</h4>
+        <p>Here we describe how to add and subtract scalars...</p>
+        <h4>Scalar multiplication</h4>
+        <p>Here we describe scalar multiplication...</p>
+        <h4>Linear combination</h4>
+        <p>And here is linear combination...</p>
+        <button class="next-button" data-next-step="step-3">Next</button>
+    </div>
+
+    <!-- Step 3: Vectors -->
+    <div class="step-container" id="step-3">
+        <h3>Vectors</h3>
+        <div id="vector-container"></div>
+        <p>Vectors are 1-dimensional arrays of numbers...</p>
+        <!-- Add more details or final steps -->
+    </div>
+
+    <!-- Add more steps as needed -->
+    <script src="progressiveReveal.js" defer></script>
 </body>
 </html>

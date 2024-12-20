@@ -61,3 +61,19 @@
     text-anchor: middle;
     dominant-baseline: middle;
 }
+
+.step-container {
+    display: none;
+    margin-top: 20px;
+}
+
+#step-1 {
+    display: block; /* The first step is visible by default */
+}
+
+/* Style your buttons and other elements as desired */
+.next-button {
+    margin-top: 20px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
