@@ -1,0 +1,18 @@
+.random-button {
+    width: 100px;           /* Sets the width of the button */
+    height: 25px;           /* Sets the height of the button */
+    font-size: 18px;        /* Increases the font size for better readability */
+    padding: 12px 24px;     /* Adjusts the padding inside the button */
+    margin-bottom: 10px;    /* Maintains spacing between multiple buttons */
+    border: none;           /* Removes the default border */
+    border-radius: 8px;     /* Adds rounded corners */
+    background-color: #4CAF50; /* Changes the background color */
+    color: white;           /* Sets the text color */
+    cursor: pointer;        /* Changes the cursor on hover */
+    transition: background-color 0.3s ease; /* Adds a transition effect */
+}
+
+/* Optional: Add hover effects for better interactivity */
+.random-button:hover {
+    background-color: #45a049;
+}

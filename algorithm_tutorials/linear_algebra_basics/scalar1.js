@@ -6,8 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const container = d3.select("#scalar-container");
 
     // Set dimensions for the SVG square
-    const width = 100;
-    const height = 100;
+    const width = 50;
+    const height = 50;
 
     // Initialize the scalar value (integer by default)
     let scalarValue = getRandomInteger();
