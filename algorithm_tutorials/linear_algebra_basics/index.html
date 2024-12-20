@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Linear Algebra Tutorial</title>
+    <!-- Include D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Include scalar.js -->
+    <script src="scalar1.js" defer></script>
+    <style>
+        /* Container setup for side-by-side layout */
+        #scalar-container {
+            display: flex;
+            flex-direction: row; /* Arrange items horizontally */
+            align-items: center;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        /* SVG square styling */
+        .scalar-square {
+            stroke: #333;
+            stroke-width: 2;
+            fill: #f9f9f9;
+        }
+        /* Scalar value text styling */
+        .scalar-value {
+            font-size: 24px;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+        /* Buttons container */
+        .buttons-container {
+            display: flex;
+            flex-direction: column; /* Stack buttons vertically */
+            margin-left: 20px; /* Space between SVG and buttons */
+        }
+        /* Individual button styling */
+        .random-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-bottom: 10px; /* Space between buttons */
+            cursor: pointer;
+        }
+        /* Remove margin from the last button */
+        .random-button:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1> Basics of Linear Algebra </h1>
+    <div>Linear algebra is a language that consists of operations on arrays of numbers. </div>
+    <h3>Scalars</h3>
+    <div>The simplest possible array of numbers is simply a single number.</div>
+    <div>This array is called a <b>scalar</b>. It is a <b>0-dimensional</b> array, because
+    it doesn't vary along any dimension (it consists of only one element).</div>
+    <!-- Container for the scalar visualization and buttons -->
+    <div id="scalar-container">
+        <!-- SVG and buttons will be appended here by scalar.js -->
+    </div>
+    <h3>Operations on scalars</h3>
+    <h4>Addition and subtraction</h4>
+    <h4>Scalar multiplication</h4>
+    <h4>Linear combination</h4>
+</body>
+</html>
