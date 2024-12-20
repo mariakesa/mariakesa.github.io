@@ -47,3 +47,17 @@
 .random-button:hover {
     background-color: #45a049;
 }
+
+#vector-container {
+    display: flex;
+    flex-direction: row; /* Arrange items horizontally */
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.vector-value {
+    font-size: 12px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}

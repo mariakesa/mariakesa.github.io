@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const height = 50;
 
     // Initialize the scalar value (integer by default)
-    let scalarValue = getRandomInteger();
 
     // Create an SVG element
     const svg = container.append("svg")
@@ -19,4 +18,12 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("width", width)
         .attr("height", height)
         .attr("class", "vector-square");
+
+    scalarValue= "hello";
+    const text = svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", height / 2)
+        .attr("class", "vector-value")
+        .text(scalarValue);
+
 });
