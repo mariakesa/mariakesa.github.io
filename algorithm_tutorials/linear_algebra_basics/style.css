@@ -1,4 +1,9 @@
-       /* Container setup for side-by-side layout */
+body {
+    background: #FDE4B4;
+    color: #393234;
+}
+
+/* Container setup for side-by-side layout */
 #scalar-container {
     display: flex;
     flex-direction: row; /* Arrange items horizontally */
