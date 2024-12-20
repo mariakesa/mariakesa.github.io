@@ -8,45 +8,6 @@
     <!-- Include scalar.js -->
     <script src="scalar1.js" defer></script>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Container setup for side-by-side layout */
-        #scalar-container {
-            display: flex;
-            flex-direction: row; /* Arrange items horizontally */
-            align-items: center;
-            justify-content: center;
-            margin-top: 50px;
-        }
-        /* SVG square styling */
-        .scalar-square {
-            stroke: green;
-            stroke-width: 2;
-            fill: #34ebc6;
-        }
-        /* Scalar value text styling */
-        .scalar-value {
-            font-size: 12px;
-            text-anchor: middle;
-            dominant-baseline: middle;
-        }
-        /* Buttons container */
-        .buttons-container {
-            display: flex;
-            flex-direction: column; /* Stack buttons vertically */
-            margin-left: 20px; /* Space between SVG and buttons */
-        }
-        /* Individual button styling */
-        .random-button {
-            padding: 1px 2px;
-            font-size: 8px;
-            margin-bottom: 10px; /* Space between buttons */
-            cursor: pointer;
-        }
-        /* Remove margin from the last button */
-        .random-button:last-child {
-            margin-bottom: 0;
-        }
-    </style>
 </head>
 <body>
     <h1> Basics of Linear Algebra </h1>
@@ -63,5 +24,8 @@
     <h4>Addition and subtraction</h4>
     <h4>Scalar multiplication</h4>
     <h4>Linear combination</h4>
+
+    <h3>Vectors</h3>
+    <div id="vector-container"></div>
 </body>
 </html>

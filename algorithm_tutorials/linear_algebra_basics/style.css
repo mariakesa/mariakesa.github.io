@@ -1,8 +1,39 @@
+       /* Container setup for side-by-side layout */
+#scalar-container {
+    display: flex;
+    flex-direction: row; /* Arrange items horizontally */
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+/* SVG square styling */
+.scalar-square {
+    stroke: green;
+    stroke-width: 2;
+    fill: #34ebc6;
+}
+/* Scalar value text styling */
+.scalar-value {
+    font-size: 12px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+/* Buttons container */
+.buttons-container {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    margin-left: 20px; /* Space between SVG and buttons */
+}
+/* Remove margin from the last button */
+.random-button:last-child {
+    margin-bottom: 0;
+}
+
 .random-button {
-    width: 100px;           /* Sets the width of the button */
+    width: 75px;           /* Sets the width of the button */
     height: 25px;           /* Sets the height of the button */
-    font-size: 18px;        /* Increases the font size for better readability */
-    padding: 12px 24px;     /* Adjusts the padding inside the button */
+    font-size: 8px;        /* Increases the font size for better readability */
+    padding: 5px 5px;     /* Adjusts the padding inside the button */
     margin-bottom: 10px;    /* Maintains spacing between multiple buttons */
     border: none;           /* Removes the default border */
     border-radius: 8px;     /* Adds rounded corners */
