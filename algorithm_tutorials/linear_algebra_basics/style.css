@@ -19,7 +19,7 @@ body {
 }
 /* Scalar value text styling */
 .scalar-value {
-    font-size: 12px;
+    font-size: 70%;
     text-anchor: middle;
     fill:#2E282A;
 }
