@@ -6,9 +6,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const width = 50;
     const height = 50;
 
+    colors=['black','pink','gray'];
+
+    function createRowVector(container) {
+        squareSize = width/colors.length;
+
+        const svg = container.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        svg.selectAll("rect")
+            .data(colors)
+            .enter()
+            .append("rect")
+            .attr("width", squareSize)
+            .attr("height", squareSize)
+            .attr("x", (d, i) => i * (squareSize) + (width - (colors.length * squareSize)) / 2)
+            .attr("y", (height - squareSize) / 2)
+            .attr("fill", d => d)
+            .attr("class", "vector-square");
+    }
+
+    createRowVector(container_row);
+    
     // Initialize the scalar value (integer by default)
 
     // Create an SVG element
+    /*
     const svg_row = container_row.append("svg")
         .attr("width", width)
         .attr("height", height);
@@ -32,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("height", height/3)
         .attr("class", "vector-square")
         .attr("fill", "gray");
+    */
 
     // Select the container div
     const container_column = d3.select("#vector-container-column");
@@ -63,6 +88,14 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("height", height/3)
         .attr("class", "vector-square")
         .attr("fill", "gray");
+
+    const transpose_vec_container = d3.select("#transpose-vector");
+
+        // Create an SVG element
+    const svg_row_transpose = transpose_vec_container.append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
 
     //scalarValue= "hello";
     //const text = svg.append("text")
