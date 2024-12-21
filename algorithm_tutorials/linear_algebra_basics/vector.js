@@ -1,3 +1,22 @@
+function createRowVector(container) {
+    squareSize = width/colors.length;
+
+    const svg = container.append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    svg.selectAll("rect")
+        .data(colors)
+        .enter()
+        .append("rect")
+        .attr("width", squareSize)
+        .attr("height", squareSize)
+        .attr("x", (d, i) => i * (squareSize) + (width - (colors.length * squareSize)) / 2)
+        .attr("y", (height - squareSize) / 2)
+        .attr("fill", d => d)
+        .attr("class", "vector-square");
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     // Select the container div
     const container_row = d3.select("#vector-container-row");
@@ -21,14 +40,13 @@ document.addEventListener("DOMContentLoaded", function () {
             .append("rect")
             .attr("width", squareSize)
             .attr("height", squareSize)
-            .attr("x", (d, i) => i * (squareSize) + (width - (colors.length * squareSize)) / 2)
-            .attr("y", (height - squareSize) / 2)
+            .attr("x", (d, i) => i * (squareSize))
             .attr("fill", d => d)
             .attr("class", "vector-square");
     }
 
     createRowVector(container_row);
-    
+
     // Initialize the scalar value (integer by default)
 
     // Create an SVG element
@@ -61,10 +79,30 @@ document.addEventListener("DOMContentLoaded", function () {
     // Select the container div
     const container_column = d3.select("#vector-container-column");
 
+    function createColumnVector(container) {
+        squareSize = height/colors.length;
+
+        const svg = container.append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        svg.selectAll("rect")
+            .data(colors)
+            .enter()
+            .append("rect")
+            .attr("width", squareSize)
+            .attr("height", squareSize)
+            .attr("y", (d, i) => i * (squareSize))
+            .attr("fill", d => d)
+            .attr("class", "vector-square");
+    }
+
+    createColumnVector(container_column);
 
     // Initialize the scalar value (integer by default)
 
     // Create an SVG element
+    /*
     const svg_column = container_column.append("svg")
         .attr("width", width)
         .attr("height", height);
@@ -88,14 +126,28 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("height", height/3)
         .attr("class", "vector-square")
         .attr("fill", "gray");
-
+    */
     const transpose_vec_container = d3.select("#transpose-vector");
 
-        // Create an SVG element
-    const svg_row_transpose = transpose_vec_container.append("svg")
-        .attr("width", width)
-        .attr("height", height);
+    currently_row=true;
 
+    createRowVector(transpose_vec_container);
+
+    const buttonsContainer = d3.select("#transpose-buttons");
+
+    // Append "Generate Random Integer" button
+    const intButton = d3.select("#transpose-button")
+        .on("click", function () {
+            if (currently_row) {
+                transpose_vec_container.select("svg").remove();
+                createColumnVector(transpose_vec_container);
+                currently_row = false;
+            } else {
+                transpose_vec_container.select("svg").remove();
+                createRowVector(transpose_vec_container);
+                currently_row = true;
+            }
+        });
 
     //scalarValue= "hello";
     //const text = svg.append("text")
