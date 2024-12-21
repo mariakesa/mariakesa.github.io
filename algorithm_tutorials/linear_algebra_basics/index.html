@@ -5,18 +5,23 @@
     <title>Linear Algebra Tutorial</title>
     <!-- Include D3.js -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Playwrite+AU+VIC+Guides&family=Playwrite+CO+Guides&family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&display=swap" rel="stylesheet">
+
     <!-- Include Scripts -->
     <script src="scalar1.js" defer></script>
     <script src="vector.js" defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Basics of Linear Algebra</h1>
+    <h1 class="playwrite-au-vic-guides-regular">Basics of Linear Algebra</h1>
 
     <!-- Step 1: Introduction -->
     <div class="step-container" id="step-1">
-        <div>Linear algebra is a language that consists of operations on arrays of numbers.</div>
-        <p>
+        <div class="eb-garamond-main-text">Linear algebra is a language that consists of operations on arrays of numbers.</div>
+        <p class="eb-garamond-main-text">
             We will start by looking at the simplest concept: <b>scalars</b>.
             A scalar is just a single number — a <b>0-dimensional</b> array.
         </p>
@@ -42,9 +47,9 @@
         <h3>Vectors</h3>
         <p>Vectors can be row vectors or column vectors.</p>
         <p>They contain <b>n</b> numbers (therefore they're <b>n-dimensional</b>) arranged in either a row or a column.</p>
-        <p>This is a row vector:</p>
+        <p>This is a 3-dimensional row vector:</p>
         <div id="vector-container-row"></div>
-        <p>This is a column vector:</p>
+        <p>This is a 3-dimensional column vector:</p>
         <div id="vector-container-column"></div>
         <p>A column vector can be turned into a row vector and vice-versa, through the <b>transpose operation</b>.</p>
         <!-- Add more details or final steps -->

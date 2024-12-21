@@ -3,6 +3,34 @@ body {
     color: #393234;
 }
 
+.sofia-sans-main-text{
+    font-family: "Sofia Sans", serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+  }
+  
+
+.playwrite-co-guides-regular {
+    font-family: "Playwrite CO Guides", serif;
+    font-weight: 511;
+    font-style: normal;
+  }
+  
+.playwrite-au-vic-guides-regular {
+    font-family: "Playwrite AU VIC Guides", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+
+.eb-garamond-main-text {
+    font-family: "EB Garamond", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
 /* Container setup for side-by-side layout */
 #scalar-container {
     display: flex;
