@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Select the container div
-    const container = d3.select("#vector-container");
+    const container_row = d3.select("#vector-container-row");
 
     // Set dimensions for the SVG square
     const width = 50;
@@ -9,21 +9,66 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize the scalar value (integer by default)
 
     // Create an SVG element
-    const svg = container.append("svg")
+    const svg_row = container_row.append("svg")
         .attr("width", width)
         .attr("height", height);
 
     // Append a rectangle (square) to the SVG
-    const square = svg.append("rect")
-        .attr("width", width)
-        .attr("height", height)
+    const square1_row = svg_row.append("rect")
+        .attr("width", width/3)
+        .attr("height", height/3)
         .attr("class", "vector-square");
 
-    scalarValue= "hello";
-    const text = svg.append("text")
-        .attr("x", width / 2)
-        .attr("y", height / 2)
-        .attr("class", "vector-value")
-        .text(scalarValue);
+    const square2_row=svg_row.append("rect")
+        .attr("x", width/3)
+        .attr("width", width/3)
+        .attr("height", height/3)
+        .attr("class", "vector-square")
+        .attr("fill", "pink");
+
+    const square3_row=svg_row.append("rect")
+        .attr("x", 2*width/3)
+        .attr("width", width/3)
+        .attr("height", height/3)
+        .attr("class", "vector-square")
+        .attr("fill", "gray");
+
+    // Select the container div
+    const container_column = d3.select("#vector-container-column");
+
+
+    // Initialize the scalar value (integer by default)
+
+    // Create an SVG element
+    const svg_column = container_column.append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    // Append a rectangle (square) to the SVG
+    const square1_column = svg_column.append("rect")
+        .attr("width", width/3)
+        .attr("height", height/3)
+        .attr("class", "vector-square");
+
+    const square2_column=svg_column.append("rect")
+        .attr("y", height/3)
+        .attr("width", width/3)
+        .attr("height", height/3)
+        .attr("class", "vector-square")
+        .attr("fill", "pink");
+
+    const square3_column=svg_column.append("rect")
+        .attr("y", 2*height/3)
+        .attr("width", width/3)
+        .attr("height", height/3)
+        .attr("class", "vector-square")
+        .attr("fill", "gray");
+
+    //scalarValue= "hello";
+    //const text = svg.append("text")
+        //.attr("x", width / 2)
+        //.attr("y", height / 2)
+        //.attr("class", "vector-value")
+        //.text(scalarValue);
 
 });
