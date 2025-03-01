@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .style("font-size", "10px")
-        .text("Q1");
+        .text("Q0");
 
     // Dynamic text inside the K rectangle (starts as "K1")
     const kText = svg.append("text")
@@ -98,14 +98,14 @@ document.addEventListener("DOMContentLoaded", function () {
         .text("A(1,1)");
 
     // Initialize counter for K values (and corresponding A scores)
-    let counter = 1;
+    let counter = 0;
 
     // Update the K and A texts every second, cycling from 1 to 20.
     d3.interval(function () {
         // Update the K text (K1, K2, ..., K20)
         kText.text("K" + counter);
         // Update the A text (A(1,1), A(1,2), ..., A(1,20))
-        aText.text("A(1," + counter + ")");
+        aText.text("A(0," + counter + ")");
         // Increment counter and wrap around at 20
         counter = (counter % 20) + 1;
     }, 1000);

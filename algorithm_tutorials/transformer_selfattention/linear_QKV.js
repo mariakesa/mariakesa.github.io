@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Define a color dictionary mapping numbers 1-20 to colors for the main rectangle
     const colorMap = {
+        0: "turquoise",
         1: "red",
         2: "blue",
         3: "green",
@@ -101,7 +102,6 @@ document.addEventListener("DOMContentLoaded", function () {
         17: "violet",
         18: "indigo",
         19: "coral",
-        20: "turquoise"
     };
 
     // Append the animated main rectangle
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .text("V1");
 
     // Initialize counter
-    let counter = 1;
+    let counter = 0;
 
     // Set up an interval to update the main rectangle's color and number every second,
     // and also update the labels in the small rectangles.
