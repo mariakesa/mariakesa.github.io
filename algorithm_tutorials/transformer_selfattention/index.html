@@ -7,20 +7,43 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="split_patches.js" defer></script>
     <script src="linear_QKV.js" defer></script>
+    <script src="attention_matrix.js" defer></script>
 </head>
 <body>
 
     <h1>Transformer Self-Attention</h1>
 
+    <div>Introduction</div>
+
+    <div>
+        The object of Vision Transformer self-attention is an image that is broken up into non-overlapping patches.
+        Patches start in a high-dimensional input space.
+        Self-attention remaps them into a latent space where each dimension 
+        captures a learned combination of the original input features 
+        (via matrix multiplication) and contextual information from other patches.
+    </div>
+
+
     <div>Splitting into patches</div>
 
     <div id="split-patches-container"></div>
 
+
     <div>Linear embedding into QKV</div>
+
+    <div>
+        Image patches are mapped into a high-dimensional latent space, where their similarity to other patches 
+        determines how much influence they have on each other. This step happens by flattening
+        image patches and passing them through three matrices (QKV, which are specified by learned parameters) to
+        produce Query, Key, and Value vectors.
+    </div>
 
     <div id="linear-QKV-container"></div> 
 
-    <div>Self-attention based on QK</div>
+    <div>Attention matrix computation based on QK</div>
+
+    <div id="attention-matrix-container"></div>
+
 
     <div>Softmax based averaging of V</div>
     

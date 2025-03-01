@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("y", 50)
         .attr("width", 30)
         .attr("height", 10)
-        .attr("fill", "green");
+        .attr("fill", "lightgreen");
 
     // Define a color dictionary mapping numbers 1-20 to colors for the main rectangle
     const colorMap = {
