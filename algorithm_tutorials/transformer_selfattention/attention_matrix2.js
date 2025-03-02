@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .attr("y", row * (cellSize + 1) + topSpacing) // Shift down for the top row
                 .attr("width", cellSize)
                 .attr("height", cellSize)
-                .attr("fill", "pink") // Inside is pink
+                .attr("fill", "Aquamarine") // Inside is pink
                 .attr("fill-opacity", score) // Use precomputed attention score
                 .attr("stroke", "black") // Black border remains fully visible
                 .attr("stroke-width", 1)
