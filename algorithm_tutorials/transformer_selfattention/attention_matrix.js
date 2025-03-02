@@ -3,12 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const container = d3.select("#attention-matrix-container")
         .style("position", "relative")
         .style("width", "250px")
-        .style("height", "200px"); // ensure container has defined dimensions
+        .style("height", "100px"); // ensure container has defined dimensions
 
     // Append the SVG element positioned absolutely relative to the container
     const svg = container.append("svg")
         .attr("width", 250)
-        .attr("height", 200)
+        .attr("height", 100)
         .style("position", "absolute")
         .style("top", "0")
         .style("left", "0")
