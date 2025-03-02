@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Draw A rectangle (Aquamarine)
     svg.append("rect")
-        .attr("x", aX+10)
+        .attr("x", aX + 10)
         .attr("y", aY)
         .attr("width", qWidth)
         .attr("height", qWidth)
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Place a multiplication (dot product) symbol between Q and K
     svg.append("text")
         .attr("x", 60)
-        .attr("y", qY + qHeight/3.6)
+        .attr("y", qY + qHeight / 3.6)
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .style("font-size", "16px")
@@ -99,24 +99,25 @@ document.addEventListener("DOMContentLoaded", function () {
     let iCounter = 0;
     let kCounter = 0;
 
-    // Update the K and A texts every second. kCounter increments each tick;
-    // when it goes past 20, it resets to 0 and iCounter increments.
+    // Update the texts every second indefinitely.
+    // kCounter increments each tick; when it goes past 20, it resets to 0 and iCounter increments.
+    // When iCounter goes past 20, it resets to 0.
     d3.interval(function () {
         // Update the K text (K0, K1, ..., K20)
         kText.text("K" + kCounter);
         // Update the A text (A(i,k) with i and k updated)
         aText.text("A(" + iCounter + "," + kCounter + ")");
-
+        // Update the Q text (if desired, cycling similarly)
         qText.text("Q" + iCounter);
-        
+
         // Increment kCounter and reset if necessary
         kCounter++;
-        if (kCounter > 20) {
+        if (kCounter > 19) {
             kCounter = 0;
             iCounter++;
-            if (iCounter > 20) {
+            if (iCounter > 19) {
                 iCounter = 0;
             }
         }
-    }, 1000);
+    }, 1000); // Runs every 1000 ms indefinitely
 });

@@ -171,6 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
         textV.text("V" + counter);
 
         // Increment counter and reset if necessary
-        counter = (counter % 20) + 1;
+        counter = ((counter+1) % 20);
     }, 1000);
 });
