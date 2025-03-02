@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Append a text element for hover display
     const hoverText = svg.append("text")
-        .attr("x", numCols * (cellSize + 1) + 10) // Position to the right of the grid
-        .attr("y", cellSize) // Start near the top
+        .attr("x", numCols * (cellSize + 1) + 15) // Position to the right of the grid
+        .attr("y", cellSize+15) // Start near the top
         .attr("font-size", "16px")
         .attr("fill", "DarkBlue")
         .style("visibility", "hidden") // Initially hidden
