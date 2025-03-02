@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .style("font-size", "10px")
+        .style("font-weight", "bold")
         .text("Q0");
 
     // Dynamic text inside the K rectangle (starts as "K0")
@@ -82,6 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .style("font-size", "10px")
+        .style("font-weight", "bold")
         .text("K0");
 
     // Dynamic text inside the A rectangle (starts as "A(0,0)")
