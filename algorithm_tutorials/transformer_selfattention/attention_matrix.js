@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const container = d3.select("#attention-matrix-container")
         .style("position", "relative")
         .style("width", "250px")
-        .style("height", "200"); // ensure container has defined dimensions
+        .style("height", "200px"); // ensure container has defined dimensions
 
     // Append the SVG element positioned absolutely relative to the container
     const svg = container.append("svg")
@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("opacity", 0.5);
 
     // Place a multiplication (dot product) symbol between Q and K
-    // Q right edge = qX + qWidth = 30+15 = 45, K left edge = kX = 75, center = (45+75)/2 = 60
     svg.append("text")
         .attr("x", 60)
         .attr("y", qY + qHeight/3.6)
@@ -59,7 +58,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .text("×");
 
     // Place an equality symbol between K and A
-    // K right edge = kX + kWidth = 75+45 = 120, A left edge = aX = 150, center = (120+150)/2 = 135
     svg.append("text")
         .attr("x", 135)
         .attr("y", kY + kHeight / 1.5)
@@ -68,8 +66,8 @@ document.addEventListener("DOMContentLoaded", function () {
         .style("font-size", "16px")
         .text("=");
 
-    // Static text inside the Q rectangle: "Q1"
-    svg.append("text")
+    // Static text inside the Q rectangle: "Q0"
+    const qText = svg.append("text")
         .attr("x", qX + qWidth / 2)
         .attr("y", qY + qHeight / 2)
         .attr("text-anchor", "middle")
@@ -77,16 +75,16 @@ document.addEventListener("DOMContentLoaded", function () {
         .style("font-size", "10px")
         .text("Q0");
 
-    // Dynamic text inside the K rectangle (starts as "K1")
+    // Dynamic text inside the K rectangle (starts as "K0")
     const kText = svg.append("text")
         .attr("x", kX + kWidth / 2)
         .attr("y", kY + kHeight / 2)
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "middle")
         .style("font-size", "10px")
-        .text("K1");
+        .text("K0");
 
-    // Dynamic text inside the A rectangle (starts as "A(1,1)")
+    // Dynamic text inside the A rectangle (starts as "A(0,0)")
     const aText = svg.append("text")
         .attr("x", aX + aWidth / 2)
         .attr("y", aY + aHeight / 3.6)
@@ -95,18 +93,30 @@ document.addEventListener("DOMContentLoaded", function () {
         .style("font-size", "12px")
         .style("font-weight", "bold")
         .style("fill", "DarkBlue")
-        .text("A(1,1)");
+        .text("A(0,0)");
 
-    // Initialize counter for K values (and corresponding A scores)
-    let counter = 0;
+    // Initialize counters for i and k (both start at 0)
+    let iCounter = 0;
+    let kCounter = 0;
 
-    // Update the K and A texts every second, cycling from 1 to 20.
+    // Update the K and A texts every second. kCounter increments each tick;
+    // when it goes past 20, it resets to 0 and iCounter increments.
     d3.interval(function () {
-        // Update the K text (K1, K2, ..., K20)
-        kText.text("K" + counter);
-        // Update the A text (A(1,1), A(1,2), ..., A(1,20))
-        aText.text("A(0," + counter + ")");
-        // Increment counter and wrap around at 20
-        counter = (counter % 20) + 1;
+        // Update the K text (K0, K1, ..., K20)
+        kText.text("K" + kCounter);
+        // Update the A text (A(i,k) with i and k updated)
+        aText.text("A(" + iCounter + "," + kCounter + ")");
+
+        qText.text("Q" + iCounter);
+        
+        // Increment kCounter and reset if necessary
+        kCounter++;
+        if (kCounter > 20) {
+            kCounter = 0;
+            iCounter++;
+            if (iCounter > 20) {
+                iCounter = 0;
+            }
+        }
     }, 1000);
 });
