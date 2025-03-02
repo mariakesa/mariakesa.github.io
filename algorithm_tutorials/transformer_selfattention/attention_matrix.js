@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .attr("width", qWidth)
         .attr("height", qWidth)
         .attr("fill", "Aquamarine")
-        .attr("opacity", 0.5);
+        .attr("opacity", 1.0);
 
     // Place a multiplication (dot product) symbol between Q and K
     svg.append("text")
