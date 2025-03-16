@@ -92,7 +92,7 @@
                     x: clusterData.map(d => d.x),
                     y: clusterData.map(d => d.y),
                     z: clusterData.map(d => d.z),
-                    text: clusterData.map(d => d.text_summary),
+                    text: clusterData.map(d => `<b>${d.case_name}</b><br>${d.text_summary}`),
                     mode: "markers",
                     marker: {
                         size: 4,
