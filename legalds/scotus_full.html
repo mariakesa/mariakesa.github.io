@@ -35,11 +35,13 @@
 
     <!-- Title and Introduction -->
     <div class="container">
-        <h1>SCOTUS Case Embedding Visualization</h1>
+        <h1>SCOTUS Case Embedding Visualization (35,781 cases)</h1>
         <p>
-            This visualization shows a **3D UMAP projection** of SCOTUS case embeddings.
-            Each point represents a case, colored by **Spectral Clustering**.
-            Hover over a point to see a brief summary of the case.
+            I made this visualization to give access to SCOTUS at a glance.
+            The visualization was made using UMAP and Spectral Clustering using data from
+            <a href=https://www.kaggle.com/datasets/gqfiddler/scotus-opinions> Kaggle.</a>
+            A mini-version of this visualization (5000 cases) is available here:
+            <a href="https://mariakesa.github.io/legalds/scotus.html">Mini SCOTUS Visualization</a>
         </p>
     </div>
 
@@ -52,21 +54,24 @@
         <p>
             The Supreme Court of the United States (SCOTUS) decides cases that shape legal 
             precedent across the country. This visualization clusters cases based on their 
-            textual similarity, helping us see **which cases are more related** in legal context.
+            textual similarity, helping us see which cases are more related in legal context.
         </p>
 
         <h2>How to Interpret This?</h2>
         <p>
-            - **Close points** → Cases that are textually similar.<br>
-            - **Different clusters** → Cases that belong to different legal categories.<br>
-            - **Hover to read summaries** → See the key details of each case.
+            - **Close points** → Cases that share semantics.<br>
+            - **Different clusters** → Rough aggregation of cases based on neighborhood.<br>
+            - **Hover to read summaries** → See short summary of the case when you hover over a point.
         </p>
 
         <h2>About This Visualization</h2>
         <p>
-            This visualization was generated using **UMAP (Uniform Manifold Approximation and Projection)**
-            for dimensionality reduction and **Spectral Clustering** to identify case groups.
-            The embeddings are based on textual representations of case summaries.
+            I used HuggingFace Transformers and KMeans (sklearn) clustering to summarize the texts and the OpenAI API to 
+            embed the summaries in a vector space. 
+            I used UMAP to reduce the dimensionality of the embeddings to 3D and Spectral Clustering
+            to cluster the cases.
+            Each point represents a case, colored by Spectral Clustering.
+            Hover over a point to see a brief summary of the case.
         </p>
     </div>
 
