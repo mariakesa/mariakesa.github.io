@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOTUS UMAP 3D Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        #umap-plot {
+            width: 100%;
+            height: 500px;
+            margin: auto;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            text-align: left;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Title and Introduction -->
+    <div class="container">
+        <h1>SCOTUS Case Embedding Visualization</h1>
+        <p>
+            This visualization shows a **3D UMAP projection** of SCOTUS case embeddings.
+            Each point represents a case, colored by **Spectral Clustering**.
+            Hover over a point to see a brief summary of the case.
+        </p>
+    </div>
+
+    <!-- 3D UMAP Visualization -->
+    <div id="umap-plot"></div>
+
+    <!-- Additional Explanation Below the Visualization -->
+    <div class="container">
+        <h2>What Does This Mean?</h2>
+        <p>
+            The Supreme Court of the United States (SCOTUS) decides cases that shape legal 
+            precedent across the country. This visualization clusters cases based on their 
+            textual similarity, helping us see **which cases are more related** in legal context.
+        </p>
+
+        <h2>How to Interpret This?</h2>
+        <p>
+            - **Close points** → Cases that are textually similar.<br>
+            - **Different clusters** → Cases that belong to different legal categories.<br>
+            - **Hover to read summaries** → See the key details of each case.
+        </p>
+
+        <h2>About This Visualization</h2>
+        <p>
+            This visualization was generated using **UMAP (Uniform Manifold Approximation and Projection)**
+            for dimensionality reduction and **Spectral Clustering** to identify case groups.
+            The embeddings are based on textual representations of case summaries.
+        </p>
+    </div>
+
+    <script>
+        async function loadUMAPData() {
+            const response = await fetch("scotus_umap_data2.json");
+            const data = await response.json();
+
+            // Extract x, y, z, colors, and hover text
+            const clusters = [...new Set(data.map(d => d.cluster))];  // Unique cluster labels
+            const traces = clusters.map(cluster => {
+                const clusterData = data.filter(d => d.cluster === cluster);
+                
+                return {
+                    x: clusterData.map(d => d.x),
+                    y: clusterData.map(d => d.y),
+                    z: clusterData.map(d => d.z),
+                    text: clusterData.map(d => d.text_summary),
+                    mode: "markers",
+                    marker: {
+                        size: 4,
+                        line: { width: 0.5 },
+                        opacity: 0.8
+                    },
+                    type: "scatter3d",
+                    name: `Cluster ${cluster}`
+                };
+            });
+
+            // Define layout
+            const layout = {
+                title: "3D UMAP Visualization of SCOTUS Embeddings",
+                margin: { l: 0, r: 0, b: 0, t: 50 },
+                scene: {
+                    xaxis: { title: "UMAP1" },
+                    yaxis: { title: "UMAP2" },
+                    zaxis: { title: "UMAP3" }
+                }
+            };
+
+            // Render Plotly figure
+            Plotly.newPlot("umap-plot", traces, layout);
+        }
+
+        // Load and render the plot
+        loadUMAPData();
+    </script>
+
+</body>
+</html>
