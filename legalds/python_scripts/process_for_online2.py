@@ -6,6 +6,9 @@ import json
 
 # Load text summaries
 texts = pd.read_csv("/home/maria/Neurogarage2/scotusCebra/scotus_with_summaries_ordered_full.csv", header=0)["summary"]
+df_cases = pd.read_csv("/home/maria/Neurogarage2/scotusCebra/scotus_with_summaries_ordered_full.csv", header=0)
+texts = df_cases["summary"]
+case_names = df_cases["case_name"]  # Load case names
 
 # Function to format text into a box shape
 def format_text_box(text, line_length=50, max_lines=20):
@@ -59,9 +62,9 @@ for i in range(len(umap_result_)):
         "y": float(umap_result_[i, 1]),
         "z": float(umap_result_[i, 2]),
         "cluster": int(cluster_labels[i]),
+        "case_name": case_names[i],  # Include case name
         "text_summary": texts[i]
     })
-
 # Save JSON file
 json_output_path = "scotus_umap_data2.json"
 with open(json_output_path, "w") as f:
