@@ -67,7 +67,10 @@
 
         <h2>About This Visualization</h2>
         <p>
-            I used HuggingFace Transformers and KMeans (sklearn) clustering to summarize the texts and the OpenAI API to 
+            I used HuggingFace Transformers and KMeans (sklearn) clustering to summarize SCOTUS opinions. This type
+            of summarization is extractive, meaning that it takes sentences from the original text without
+            modifying them. This is why the summaries aren't fluent, but the idea here is to give a very brief
+            overview without modifying it (language models that transform text can hallucinate). I used OpenAI API to 
             embed the summaries in a vector space. 
             I used UMAP to reduce the dimensionality of the embeddings to 3D and Spectral Clustering
             to cluster the cases.
