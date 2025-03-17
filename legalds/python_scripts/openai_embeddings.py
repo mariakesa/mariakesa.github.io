@@ -18,7 +18,7 @@ df = pd.read_csv(data_path)
 texts = df["summary"].fillna("")
 
 # OpenAI embedding model
-MODEL_NAME = "text-embedding-3-small"
+MODEL_NAME = "text-embedding-3-large"
 
 # Function to get OpenAI embeddings
 def get_embedding(text, model=MODEL_NAME):
@@ -52,7 +52,7 @@ for i in tqdm(range(0, len(texts), batch_size), desc="Fetching Embeddings"):
 embeddings_array = np.array(embeddings)
 
 # Save to .npy file
-output_path = "/home/maria/Downloads/scotus_embeddings_small.npy"
+output_path = "/home/maria/Downloads/scotus_embeddings.npy"
 np.save(output_path, embeddings_array)
 
 print(f"Embeddings saved at {output_path}, shape: {embeddings_array.shape}")
