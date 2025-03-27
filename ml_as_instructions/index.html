@@ -54,7 +54,15 @@
             are combined using multiplication. Each component and instruction set
             combination is itself a grid of the same dimensionality as X. These 
             grids are then combined via addition to yield the reconstruction of
-            the original data matrix X.
+            the original data matrix X. If we use the example of a photo,
+            the components are like patterns of pixels in a 
+            dataset with n images and instructions are how much of this pixel
+            pattern is in each image. 
+            On the other hand, if our data X consists of neural activations in time,
+            the component is a pattern of activity across neurons and the instruction
+            set unrolls this pattern of activity through time by weighing each pattern
+            of activity differently at each time instant.
+
         </div>
         <div> Let's visualize how this works!</div>
 </body>
