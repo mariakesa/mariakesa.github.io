@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Machine Learning as Instruction Sets for Data</h1>
+    <h1>Machine Learning as Instruction Sets Compiled from Data</h1>
     <h2>Introduction</h2>
         <div>
             The popularity of Harry Potter is an indication 
@@ -25,7 +25,7 @@
             even though we're able to create and train these systems, we are left
             wondering how they work. Information about how these "magic spell" algorithms
             work is buried in dense research papers, graduate level courses and massive
-            repositories. This book is my attempt to make sense of it all in a way
+            code repositories. This book is my attempt to make sense of it all in a way
             that is helpful for anybody who wants to better understand these "spells".
         </div>
 
@@ -65,5 +65,15 @@
 
         </div>
         <div> Let's visualize how this works!</div>
+
+    <h2>Illustrating Matrix Decomposition-- PCA and eigenfaces</h2>
+        <div>We are going to use the most famous matrix decomposition algorithm,
+            PCA to automatically find components and instructions to decompose
+            a dataset of faces X, where each column of X is a face in pixel space (
+            this means that they are flattened into a long vector).
+            The components in this data are flattened eigenfaces
+            and each instruction specifies a weight for how much of this "eigenface" 
+            to add or subtract to reconstruct the original face.
+        </div>
 </body>
 </html>
