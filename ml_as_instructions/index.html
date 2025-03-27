@@ -32,5 +32,30 @@
         <div>""Every machine learning algorithm is a kind of spell — a compact incantation that tells a machine what patterns to recognize, what boundaries to draw, what structures to reconstruct."
             --ChatGPT
         </div>
+
+        <h2>Matrix Decomposition</h2>
+
+        <div>We start with the most common object in Machine Learning-- a grid of numbers,
+            like a wall of LEGO bricks. This grid represents your data. It could be
+            a grid of pixels in a photo, people and their movie ratings or the 
+            activation patterns of neurons over time (I am a computational neuroscientist).
+            Let's call this big LEGO wall matrix X. So, each little square (brick) has a number
+            in it -- maybe a brightness, a score, or a measurement.
+        </div>
+        <div>
+            The goal of matrix decomposition is to break this data grid X into
+            components (U) and instructions (V) to reconstruct the original from these components.
+            Each component u is a vector of the same dimensionality as the number of
+            rows in the data matrix. Instruction vectors v dictate how much each 
+            component contributes to the reconstruction -- the are a vector with 
+            the same number of elements as the number of columns in the data matrix.
+        </div>
+        <div>Each component u thus has a corresponding instruction set v, and they
+            are combined using multiplication. Each component and instruction set
+            combination is itself a grid of the same dimensionality as X. These 
+            grids are then combined via addition to yield the reconstruction of
+            the original data matrix X.
+        </div>
+        <div> Let's visualize how this works!</div>
 </body>
 </html>
