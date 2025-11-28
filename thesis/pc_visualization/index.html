@@ -12,7 +12,6 @@
       background:#f5f5f7;
       color:#222;
     }
-
     h1 { margin-bottom: 0.2rem; }
 
     #controls {
@@ -21,19 +20,14 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
+    #pc-select { padding: 3px 8px; font-size: 0.9rem; }
 
-    #pc-select {
-      padding: 3px 8px;
-      font-size: 0.9rem;
-    }
-
-    /* --- Extremes Section --- */
+    /* Extremes */
     #extremes-wrapper {
       display: flex;
       gap: 20px;
       margin-bottom: 25px;
     }
-
     .extreme-block {
       flex: 1;
       background:white;
@@ -41,20 +35,17 @@
       padding:10px;
       box-shadow:0 1px 5px rgba(0,0,0,0.1);
     }
-
     .extreme-title {
       font-weight:600;
       font-size:0.9rem;
       margin-bottom:10px;
       color:#444;
     }
-
     .extreme-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 6px;
     }
-
     .extreme-grid img {
       width:100%;
       height:60px;
@@ -63,14 +54,13 @@
       box-shadow:0 1px 3px rgba(0,0,0,0.1);
     }
 
-    /* --- Main Image Grid --- */
+    /* Main grid */
     #image-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
       gap:10px;
-      padding-bottom:200px;  /* ensure room above sticky plot */
+      padding-bottom:200px;
     }
-
     .img-cell {
       background:white;
       padding:6px;
@@ -82,33 +72,25 @@
       transition:0.1s ease;
       cursor:pointer;
     }
-
     .img-cell:hover {
       transform:translateY(-2px);
       box-shadow:0 3px 8px rgba(0,0,0,0.15);
       border-color:#555;
     }
-
     .img-cell.selected {
       border-color:#e67e22;
       box-shadow:0 3px 12px rgba(230,126,34,0.35);
     }
-
     .img-cell img {
       width:80px;
       height:80px;
       object-fit:cover;
       border-radius:6px;
-      display:block;
       margin:auto;
     }
+    .proj-value { margin-top:2px; color:#444; }
 
-    .proj-value {
-      margin-top:2px;
-      color:#444;
-    }
-
-    /* --- Sticky Bottom Plot --- */
+    /* Sticky bottom plot */
     #plot-wrapper {
       position: sticky;
       bottom: 0;
@@ -118,12 +100,24 @@
       border-radius:10px 10px 0 0;
       box-shadow:0 -2px 10px rgba(0,0,0,0.1);
     }
+    #plot-container { overflow-x:auto; margin-top:6px; }
 
-    #plot-container {
-      overflow-x:auto;
-      margin-top:6px;
+    /* Tooltip */
+    #tooltip {
+      position: absolute;
+      padding: 6px 8px;
+      background: white;
+      border: 1px solid #444;
+      border-radius: 5px;
+      pointer-events: none;
+      font-size: 0.8rem;
+      display: none;
+      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      max-width: 260px;
+      z-index: 9999;
     }
 
+    /* Legend */
     .legend {
       display:flex;
       gap:1rem;
@@ -131,23 +125,20 @@
       font-size:0.8rem;
       color:#444;
     }
-
     .legend-swatch {
       width:20px;
       height:2px;
       background:black;
       display:inline-block;
     }
-
-    .legend-swatch.eigen {
-      background:#e67e22;
-    }
+    .legend-swatch.eigen { background:#e67e22; }
 
   </style>
 </head>
 
-
 <body>
+
+<div id="tooltip"></div>
 
 <h1>ViT PCA Projection Explorer</h1>
 
@@ -161,23 +152,19 @@
   <span id="projection-label"></span>
 </div>
 
-<!-- Top 10 digests -->
 <div id="extremes-wrapper">
   <div class="extreme-block">
     <div class="extreme-title">10 Most Negative</div>
     <div id="extreme-negative" class="extreme-grid"></div>
   </div>
-
   <div class="extreme-block">
     <div class="extreme-title">10 Most Positive</div>
     <div id="extreme-positive" class="extreme-grid"></div>
   </div>
 </div>
 
-<!-- Main image grid -->
 <div id="image-grid"></div>
 
-<!-- Sticky bottom logit plot -->
 <div id="plot-wrapper">
   <div id="plot-title">Hover an image to see its logits and eigenlogit</div>
   <div id="plot-container"></div>
@@ -187,22 +174,29 @@
   </div>
 </div>
 
-
 <script>
   const dataUrl = "data_dev/vit_pca.json";
   const imgBase = "data_dev/";
+  const LABEL_PATH = "data_dev/imagenet1000_clsidx_to_labels.txt";
+
+  let classLabels = [];
+
+  d3.text(LABEL_PATH).then(text => {
+    classLabels = text.trim().split("\n");
+  });
+
+  const tooltip = document.getElementById("tooltip");
 
   const plotWidth = 900;
   const plotHeight = 250;
   const margin = {top:10, right:10, bottom:30, left:40};
 
   let images = [];
-  let eigenlogitsRaw = [];
+  let eigenRaw = [];
   let eigenScaled = [];
   let currentPC = 0;
   let minY, maxY;
 
-  /* ---- SVG SETUP ---- */
   const svg = d3.select("#plot-container")
     .append("svg")
     .attr("width", plotWidth)
@@ -223,29 +217,35 @@
     .y(d=>y(d));
 
   const pathLogits = g.append("path")
-    .attr("stroke","black")
-    .attr("fill","none")
+    .attr("stroke","black").attr("fill","none")
     .attr("stroke-width",1.2);
 
   const pathEigen = g.append("path")
-    .attr("stroke","#e67e22")
-    .attr("fill","none")
-    .attr("stroke-width",1.2)
-    .attr("stroke-dasharray","4 3");
+    .attr("stroke","#e67e22").attr("fill","none")
+    .attr("stroke-width",1.2).attr("stroke-dasharray","4 3");
+
+  const focus = g.append("circle")
+    .attr("r", 4)
+    .attr("fill", "#e67e22")
+    .style("display", "none");
+
+  const overlay = g.append("rect")
+    .attr("width", innerW)
+    .attr("height", innerH)
+    .attr("fill", "transparent")
+    .style("pointer-events", "all");
 
   const pcLabel = d3.select("#projection-label");
   const plotTitle = d3.select("#plot-title");
 
-
-  /* ---- LOAD JSON ---- */
   d3.json(dataUrl).then(data => {
     images = data.images;
-    eigenlogitsRaw = data.eigenlogits;
+    eigenRaw = data.eigenlogits;
 
     minY = d3.min(images, d => d3.min(d.logits));
     maxY = d3.max(images, d => d3.max(d.logits));
 
-    eigenScaled = eigenlogitsRaw.map(arr => {
+    eigenScaled = eigenRaw.map(arr => {
       const mn = d3.min(arr), mx = d3.max(arr);
       const scale = (maxY - minY) / ((mx - mn) || 1);
       return arr.map(v => (v - mn)*scale + minY);
@@ -254,13 +254,9 @@
     setupGrid();
     setupAxes();
     updateGridOrder();
-
-    // First image to show initial plot
     selectImage(images[0]);
   });
 
-
-  /* ---- SETUP GRID ---- */
   function setupGrid() {
     const cells = d3.select("#image-grid")
       .selectAll(".img-cell")
@@ -269,16 +265,12 @@
       .attr("class","img-cell")
       .on("mouseover",(ev,d)=>selectImage(d));
 
-    cells.append("img")
-      .attr("src", d => imgBase+d.image);
-
+    cells.append("img").attr("src", d => imgBase+d.image);
     cells.append("div")
       .attr("class","proj-value")
       .text(d => "proj: "+d.pc[currentPC].toFixed(3));
   }
 
-
-  /* ---- EXTREMES DIGEST ---- */
   function updateExtremes() {
     const neg = images.slice(0, 10);
     const pos = images.slice(-10);
@@ -296,8 +288,6 @@
       .attr("src",d => imgBase+d.image);
   }
 
-
-  /* ---- GRID ORDER ---- */
   function updateGridOrder() {
     images.sort((a,b)=>a.pc[currentPC] - b.pc[currentPC]);
 
@@ -308,15 +298,12 @@
     cells.select(".proj-value")
       .text(d=>"proj: "+d.pc[currentPC].toFixed(3));
 
-    // Force correct visual layout in CSS Grid
     cells.style("order",(d,i)=>i);
 
     updateExtremes();
     pcLabel.text(`Images sorted by PC${currentPC+1}`);
   }
 
-
-  /* ---- PLOT ---- */
   function setupAxes() {
     const L = images[0].logits.length;
     x.domain([0, L-1]);
@@ -343,14 +330,43 @@
 
     pathLogits.datum(logits).attr("d", line);
     pathEigen.datum(eigen).attr("d", line);
-  }
+
+    overlay.on("mousemove", function(event) {
+        const [mx] = d3.pointer(event, this);
+        const index = Math.round(x.invert(mx));
+
+        if (index < 0 || index >= logits.length) return;
+
+        const label = classLabels[index] || "(unknown)";
+        const logitVal = logits[index];
+        const eigenVal = eigen[index];
+
+        tooltip.style.display = "block";
+        tooltip.innerHTML = `
+          <b>${label}</b><br>
+          logit: ${logitVal.toFixed(3)}<br>
+          eigen: ${eigenVal.toFixed(3)}
+        `;
+
+        tooltip.style.left = (event.pageX + 12) + "px";
+        tooltip.style.top  = (event.pageY - 20) + "px";
+
+        focus
+          .attr("cx", x(index))
+          .attr("cy", y(logitVal))
+          .style("display", "block");
+    });
+
+    overlay.on("mouseout", function() {
+        tooltip.style.display = "none";
+        focus.style("display", "none");
+    });
+}
 
 
-  /* ---- DROPDOWN ---- */
   d3.select("#pc-select").on("change", function(){
     currentPC = +this.value;
     updateGridOrder();
-
     const sel = d3.select(".img-cell.selected").datum() || images[0];
     selectImage(sel);
   });
