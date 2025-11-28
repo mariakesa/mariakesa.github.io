@@ -1,70 +1,377 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .text {
-            max-width: 600px; 
-            text-align: left;
-            font-size: medium;
-        }
+  <meta charset="UTF-8">
+  <title>ViT PCA Projection Explorer</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 
-        .text2 {
-            max-width: 600px; 
-            text-align: left;
-            font-size: small;
-        }
-    </style>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 20px;
+      background:#f5f5f7;
+      color:#222;
+    }
+    h1 { margin-bottom: 0.2rem; }
+
+    #controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    #pc-select { padding: 3px 8px; font-size: 0.9rem; }
+
+    /* Extremes */
+    #extremes-wrapper {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    .extreme-block {
+      flex: 1;
+      background:white;
+      border-radius:8px;
+      padding:10px;
+      box-shadow:0 1px 5px rgba(0,0,0,0.1);
+    }
+    .extreme-title {
+      font-weight:600;
+      font-size:0.9rem;
+      margin-bottom:10px;
+      color:#444;
+    }
+    .extreme-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .extreme-grid img {
+      width:100%;
+      height:60px;
+      object-fit:cover;
+      border-radius:4px;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Main grid */
+    #image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap:10px;
+      padding-bottom:200px;
+    }
+    .img-cell {
+      background:white;
+      padding:6px;
+      border-radius:8px;
+      font-size:0.75rem;
+      text-align:center;
+      border:1px solid transparent;
+      box-shadow:0 2px 4px rgba(0,0,0,0.08);
+      transition:0.1s ease;
+      cursor:pointer;
+    }
+    .img-cell:hover {
+      transform:translateY(-2px);
+      box-shadow:0 3px 8px rgba(0,0,0,0.15);
+      border-color:#555;
+    }
+    .img-cell.selected {
+      border-color:#e67e22;
+      box-shadow:0 3px 12px rgba(230,126,34,0.35);
+    }
+    .img-cell img {
+      width:80px;
+      height:80px;
+      object-fit:cover;
+      border-radius:6px;
+      margin:auto;
+    }
+    .proj-value { margin-top:2px; color:#444; }
+
+    /* Sticky bottom plot */
+    #plot-wrapper {
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+      background:white;
+      padding:12px;
+      border-radius:10px 10px 0 0;
+      box-shadow:0 -2px 10px rgba(0,0,0,0.1);
+    }
+    #plot-container { overflow-x:auto; margin-top:6px; }
+
+    /* Tooltip */
+    #tooltip {
+      position: absolute;
+      padding: 6px 8px;
+      background: white;
+      border: 1px solid #444;
+      border-radius: 5px;
+      pointer-events: none;
+      font-size: 0.8rem;
+      display: none;
+      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      max-width: 260px;
+      z-index: 9999;
+    }
+
+    /* Legend */
+    .legend {
+      display:flex;
+      gap:1rem;
+      margin-top:0.5rem;
+      font-size:0.8rem;
+      color:#444;
+    }
+    .legend-swatch {
+      width:20px;
+      height:2px;
+      background:black;
+      display:inline-block;
+    }
+    .legend-swatch.eigen { background:#e67e22; }
+
+  </style>
 </head>
-<body>
-    <h3>Progress report: 30.01.2024</h3>
-        <h4>Introduction</h4>
-            <p class="text">
-                Deep neural networks learn representations of stimuli. This is 
-                convenient for visual neuroscience, firstly because the images
-                and movies presented to an animal can be transformed with
-                neural networks so that we
-                can study p(response|f(stimulus)) instead of p(response|stimulus).
-                Neural networks map visual stimuli from pixel space to another vector 
-                space where information of interest can be easily (linearly) decoded 
-                from the representation. This is called disentanglement (James Dicarlo) and it 
-                simplifies our life immensely, because we can obtain re-representations of stimuli by 
-                simply training a model to minimize a cost function on a task. Some forms of learning
-                (such as self-supervised learning and adversarial learning) don't even require human annotated data!
-                This is great for neuroscience, because if we know that a neural network can achieve
-                object recognition then the representations that it learns may be ethologically
-                relevant for primate vision. 
-            </p>
 
-            <img src="./img/Screenshot from 2024-01-30 01-51-26.png" width="500" height="300">
-            <p class="text">Figure 1. InfoGAN learns disentangled representations where variation
-                along particular dimensions of a seed vector
-                determines high-level properties such as emotion and the presence of glasses 
-                in generated images(infoGAN)
-            </p>
-            <p class="text">
-                The utility of Convolutional Neural Networks (ConvNets) is well established in neuroscience.
-                Ever since the original AlexNet paper that achieved state of the art on ImageNet, these
-                models have been used extensively to study biological object recognition. However, ConvNets
-                have an inductive bias which helps in low and medium data setting, but hinders their performance
-                in the massive data regime. Specifically, ConvNets have localized receptive fields and therefore
-                have difficulty
-                integrating information that spans multiple parts of the image. In the language of statistical learning,
-                these models have a bias problem (they are too simple to capture
-                complex dependencies that are necessary for some tasks). In the abundant data and 
-                compute resource regime another architecture-- the Transformer-- has beat ConvNets on computer vision 
-                benchmarks. 
-            </p>
-            <img src="./img/Convolution_arithmetic_-_Full_padding_no_strides_transposed.gif" width="200" height="100">
-            <img src="./img/vit.gif" width="300" height="200">
-            <p class="text">Figure 2. Convolution operation (left) and the Transformer architecture (right) (see resource references)</p>
-            <p></p>
-        <h5>Literature</h5>
-            <p></p>
-        <h5>Resources references</h5>
-            <p class="text2"> <a href="https://commons.wikimedia.org/wiki/File:Convolution_arithmetic_-_Full_padding_no_strides_transposed.gif">The Convolutional Neural Network gif, credit: Wikimedia Commons</a></p>
-            <p class="text2"><a href="https://github.com/lucidrains/vit-pytorch/blob/main/images/vit.gif">The Transformer gif, credit: lucidrains</a></p>
+<body>
+
+<div id="tooltip"></div>
+
+<h1>ViT PCA Projection Explorer</h1>
+
+<div id="controls">
+  <label>Projection direction:</label>
+  <select id="pc-select">
+    <option value="0">PC1</option>
+    <option value="1">PC2</option>
+    <option value="2">PC3</option>
+  </select>
+  <span id="projection-label"></span>
+</div>
+
+<div id="extremes-wrapper">
+  <div class="extreme-block">
+    <div class="extreme-title">10 Most Negative</div>
+    <div id="extreme-negative" class="extreme-grid"></div>
+  </div>
+  <div class="extreme-block">
+    <div class="extreme-title">10 Most Positive</div>
+    <div id="extreme-positive" class="extreme-grid"></div>
+  </div>
+</div>
+
+<div id="image-grid"></div>
+
+<div id="plot-wrapper">
+  <div id="plot-title">Hover an image to see its logits and eigenlogit</div>
+  <div id="plot-container"></div>
+  <div class="legend">
+    <div><span class="legend-swatch"></span> Raw logits</div>
+    <div><span class="legend-swatch eigen"></span> Eigenlogit (scaled)</div>
+  </div>
+</div>
+
+<script>
+  const dataUrl = "data_dev/vit_pca.json";
+  const imgBase = "data_dev/";
+  const LABEL_PATH = "data_dev/imagenet1000_clsidx_to_labels.txt";
+
+  let classLabels = [];
+
+  d3.text(LABEL_PATH).then(text => {
+    classLabels = text.trim().split("\n");
+  });
+
+  const tooltip = document.getElementById("tooltip");
+
+  const plotWidth = 900;
+  const plotHeight = 250;
+  const margin = {top:10, right:10, bottom:30, left:40};
+
+  let images = [];
+  let eigenRaw = [];
+  let eigenScaled = [];
+  let currentPC = 0;
+  let minY, maxY;
+
+  const svg = d3.select("#plot-container")
+    .append("svg")
+    .attr("width", plotWidth)
+    .attr("height", plotHeight);
+
+  const innerW = plotWidth - margin.left - margin.right;
+  const innerH = plotHeight - margin.top - margin.bottom;
+  const g = svg.append("g").attr("transform",`translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleLinear().range([0, innerW]);
+  const y = d3.scaleLinear().range([innerH, 0]);
+
+  const xAxisG = g.append("g").attr("transform",`translate(0,${innerH})`);
+  const yAxisG = g.append("g");
+
+  const line = d3.line()
+    .x((d,i)=>x(i))
+    .y(d=>y(d));
+
+  const pathLogits = g.append("path")
+    .attr("stroke","black").attr("fill","none")
+    .attr("stroke-width",1.2);
+
+  const pathEigen = g.append("path")
+    .attr("stroke","#e67e22").attr("fill","none")
+    .attr("stroke-width",1.2).attr("stroke-dasharray","4 3");
+
+  const focus = g.append("circle")
+    .attr("r", 4)
+    .attr("fill", "#e67e22")
+    .style("display", "none");
+
+  const overlay = g.append("rect")
+    .attr("width", innerW)
+    .attr("height", innerH)
+    .attr("fill", "transparent")
+    .style("pointer-events", "all");
+
+  const pcLabel = d3.select("#projection-label");
+  const plotTitle = d3.select("#plot-title");
+
+  d3.json(dataUrl).then(data => {
+    images = data.images;
+    eigenRaw = data.eigenlogits;
+
+    minY = d3.min(images, d => d3.min(d.logits));
+    maxY = d3.max(images, d => d3.max(d.logits));
+
+    eigenScaled = eigenRaw.map(arr => {
+      const mn = d3.min(arr), mx = d3.max(arr);
+      const scale = (maxY - minY) / ((mx - mn) || 1);
+      return arr.map(v => (v - mn)*scale + minY);
+    });
+
+    setupGrid();
+    setupAxes();
+    updateGridOrder();
+    selectImage(images[0]);
+  });
+
+  function setupGrid() {
+    const cells = d3.select("#image-grid")
+      .selectAll(".img-cell")
+      .data(images, d => d.id)
+      .join("div")
+      .attr("class","img-cell")
+      .on("mouseover",(ev,d)=>selectImage(d));
+
+    cells.append("img").attr("src", d => imgBase+d.image);
+    cells.append("div")
+      .attr("class","proj-value")
+      .text(d => "proj: "+d.pc[currentPC].toFixed(3));
+  }
+
+  function updateExtremes() {
+    const neg = images.slice(0, 10);
+    const pos = images.slice(-10);
+
+    d3.select("#extreme-negative")
+      .selectAll("img")
+      .data(neg)
+      .join("img")
+      .attr("src",d => imgBase+d.image);
+
+    d3.select("#extreme-positive")
+      .selectAll("img")
+      .data(pos)
+      .join("img")
+      .attr("src",d => imgBase+d.image);
+  }
+
+  function updateGridOrder() {
+    images.sort((a,b)=>a.pc[currentPC] - b.pc[currentPC]);
+
+    const cells = d3.select("#image-grid")
+      .selectAll(".img-cell")
+      .data(images, d=>d.id);
+
+    cells.select(".proj-value")
+      .text(d=>"proj: "+d.pc[currentPC].toFixed(3));
+
+    cells.style("order",(d,i)=>i);
+
+    updateExtremes();
+    pcLabel.text(`Images sorted by PC${currentPC+1}`);
+  }
+
+  function setupAxes() {
+    const L = images[0].logits.length;
+    x.domain([0, L-1]);
+    y.domain([minY, maxY]).nice();
+
+    xAxisG.call(d3.axisBottom(x).ticks(10).tickFormat(d3.format("d")));
+    yAxisG.call(d3.axisLeft(y).ticks(6));
+  }
+
+  function selectImage(d){
+    d3.selectAll(".img-cell")
+      .classed("selected", cell => cell===d);
+
+    updatePlot(d);
+
+    plotTitle.text(
+      `${d.image} — PC1=${d.pc[0].toFixed(3)}, PC2=${d.pc[1].toFixed(3)}, PC3=${d.pc[2].toFixed(3)}`
+    );
+  }
+
+  function updatePlot(d){
+    const logits = d.logits;
+    const eigen = eigenScaled[currentPC];
+
+    pathLogits.datum(logits).attr("d", line);
+    pathEigen.datum(eigen).attr("d", line);
+
+    overlay.on("mousemove", function(event) {
+        const [mx] = d3.pointer(event, this);
+        const index = Math.round(x.invert(mx));
+
+        if (index < 0 || index >= logits.length) return;
+
+        const label = classLabels[index] || "(unknown)";
+        const logitVal = logits[index];
+        const eigenVal = eigen[index];
+
+        tooltip.style.display = "block";
+        tooltip.innerHTML = `
+          <b>${label}</b><br>
+          logit: ${logitVal.toFixed(3)}<br>
+          eigen: ${eigenVal.toFixed(3)}
+        `;
+
+        tooltip.style.left = (event.pageX + 12) + "px";
+        tooltip.style.top  = (event.pageY - 20) + "px";
+
+        focus
+          .attr("cx", x(index))
+          .attr("cy", y(logitVal))
+          .style("display", "block");
+    });
+
+    overlay.on("mouseout", function() {
+        tooltip.style.display = "none";
+        focus.style("display", "none");
+    });
+}
+
+
+  d3.select("#pc-select").on("change", function(){
+    currentPC = +this.value;
+    updateGridOrder();
+    const sel = d3.select(".img-cell.selected").datum() || images[0];
+    selectImage(sel);
+  });
+
+</script>
+
 </body>
 </html>
