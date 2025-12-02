@@ -11,12 +11,13 @@
     #imgTooltip {
       position: absolute;
       display: none;
-      padding: 4px;
+      padding: 6px;
       background: white;
       border: 1px solid #aaa;
-      border-radius: 4px;
+      border-radius: 6px;
       z-index: 20;
       pointer-events: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
   </style>
 </head>
@@ -46,14 +47,14 @@ loadData().then(data => {
     const inCurve = data.inanimate.curve;
     const inIdx = data.inanimate.image_indices;
 
-    // ============ POINT TRACES MUST USE hoverinfo:"skip" (not "none") ============
+    // POINT TRACES WITH BIGGER MARKERS
     const trace_anim_pts = {
         type: "scatter3d",
         mode: "markers",
         x: animPts.map(p => p[0]),
         y: animPts.map(p => p[1]),
         z: animPts.map(p => p[2]),
-        marker: { size: 4, color: "blue" },
+        marker: { size: 5, color: "blue" },   // << bigger
         customdata: animIdx,
         hoverinfo: "none"
     };
@@ -64,12 +65,11 @@ loadData().then(data => {
         x: inPts.map(p => p[0]),
         y: inPts.map(p => p[1]),
         z: inPts.map(p => p[2]),
-        marker: { size: 4, color: "red" },
+        marker: { size: 5, color: "red" },    // << bigger
         customdata: inIdx,
         hoverinfo: "none"
     };
 
-    // ============ LINES CAN USE NONE (no hover wanted) ============
     const trace_anim_curve = {
         type: "scatter3d",
         mode: "lines",
@@ -90,8 +90,11 @@ loadData().then(data => {
         hoverinfo: "none"
     };
 
+    // Larger hover radius
     const layout = {
         title: "Neural Ribbons 3D",
+        hovermode: "closest",
+        hoverdistance: 35,    // << bigger hover radius
         scene: {
             xaxis: { title: "PC1" },
             yaxis: { title: "PC2" },
@@ -135,6 +138,7 @@ loadData().then(data => {
 
 });
 </script>
+
 
 </body>
 </html>
