@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Neural Ribbons 3D</title>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    body { margin: 0; padding: 0; background: #fafafa; }
+    #plot { width: 100vw; height: 100vh; }
+
+    #imgTooltip {
+      position: absolute;
+      display: none;
+      padding: 4px;
+      background: white;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      z-index: 20;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="plot"></div>
+<div id="imgTooltip"></div>
+
+<script>
+async function loadData() {
+    const r = await fetch("./data_dev/ribbons.json");
+    return r.json();
+}
+
+function imagePath(i) {
+    return `./data_dev/scene_${String(i).padStart(3,'0')}.png`;
+}
+
+loadData().then(data => {
+
+    const animPts = data.animal.points;
+    const animCurve = data.animal.curve;
+    const animIdx = data.animal.image_indices;
+
+    const inPts = data.inanimate.points;
+    const inCurve = data.inanimate.curve;
+    const inIdx = data.inanimate.image_indices;
+
+    // ============ POINT TRACES MUST USE hoverinfo:"skip" (not "none") ============
+    const trace_anim_pts = {
+        type: "scatter3d",
+        mode: "markers",
+        x: animPts.map(p => p[0]),
+        y: animPts.map(p => p[1]),
+        z: animPts.map(p => p[2]),
+        marker: { size: 4, color: "blue" },
+        customdata: animIdx,
+        hoverinfo: "skip"     // <-- CRUCIAL FIX 🔥🔥🔥
+    };
+
+    const trace_in_pts = {
+        type: "scatter3d",
+        mode: "markers",
+        x: inPts.map(p => p[0]),
+        y: inPts.map(p => p[1]),
+        z: inPts.map(p => p[2]),
+        marker: { size: 4, color: "red" },
+        customdata: inIdx,
+        hoverinfo: "skip"     // <-- CRUCIAL FIX 🔥🔥🔥
+    };
+
+    // ============ LINES CAN USE NONE (no hover wanted) ============
+    const trace_anim_curve = {
+        type: "scatter3d",
+        mode: "lines",
+        x: animCurve.map(p => p[0]),
+        y: animCurve.map(p => p[1]),
+        z: animCurve.map(p => p[2]),
+        line: { color: "blue", width: 4 },
+        hoverinfo: "none"
+    };
+
+    const trace_in_curve = {
+        type: "scatter3d",
+        mode: "lines",
+        x: inCurve.map(p => p[0]),
+        y: inCurve.map(p => p[1]),
+        z: inCurve.map(p => p[2]),
+        line: { color: "red", width: 4 },
+        hoverinfo: "none"
+    };
+
+    const layout = {
+        title: "Neural Ribbons 3D",
+        scene: {
+            xaxis: { title: "PC1" },
+            yaxis: { title: "PC2" },
+            zaxis: { title: "PC3" }
+        }
+    };
+
+    Plotly.newPlot("plot",
+        [trace_anim_pts, trace_anim_curve, trace_in_pts, trace_in_curve],
+        layout
+    ).then(plot => {
+
+        const tooltip = document.getElementById("imgTooltip");
+
+        plot.on('plotly_hover', function(e) {
+            const point = e.points[0];
+            const idx = point.customdata;
+
+            if (idx === undefined || idx === null) {
+                tooltip.style.display = "none";
+                return;
+            }
+
+            const mouseX = e.xpx;
+            const mouseY = e.ypx;
+
+            tooltip.innerHTML = `<img src="${imagePath(idx)}" width="160">`;
+            tooltip.style.left = (mouseX + 10) + "px";
+            tooltip.style.top = (mouseY + 10) + "px";
+            tooltip.style.display = "block";
+        });
+
+        plot.on('plotly_unhover', () => {
+            tooltip.style.display = "none";
+        });
+
+    });
+
+});
+</script>
+
+</body>
+</html>
