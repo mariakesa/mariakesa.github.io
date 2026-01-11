@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AnimatouAI — Automated Animal Behavior & Welfare Monitoring</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+
+    .lang-toggle button {
+      margin-left: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .lang-toggle button.active {
+      background: #222;
+      color: white;
+      border-color: #222;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      max-width: 720px;
+    }
+
+    .demo-placeholder {
+      margin-top: 2rem;
+      padding: 2rem;
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      background: #fff;
+      text-align: center;
+      color: #777;
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid #ddd;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <div>
+        <h1>AnimatouAI</h1>
+        <div class="subtitle" data-lang="en">
+          Automated animal behavior & welfare monitoring
+        </div>
+        <div class="subtitle" data-lang="et" style="display:none;">
+          Loomade käitumise ja heaolu automatiseeritud jälgimine
+        </div>
+      </div>
+
+      <div class="lang-toggle">
+        <button id="btn-en" class="active" onclick="setLanguage('en')">EN</button>
+        <button id="btn-et" onclick="setLanguage('et')">ET</button>
+      </div>
+    </header>
+
+    <section data-lang="en">
+      <h2>What is AnimatouAI?</h2>
+      <p>
+        AnimatouAI is a research and development project focused on automated
+        animal behavior and welfare monitoring.
+      </p>
+      <p>
+        We use computer vision and machine learning to reveal behavioral states
+        directly from video, enabling non-invasive, quantitative assessment of
+        animal welfare across individuals, environments, and time.
+      </p>
+    </section>
+
+    <section data-lang="et" style="display:none;">
+      <h2>Mis on AnimatouAI?</h2>
+      <p>
+        AnimatouAI on uurimis- ja arendusprojekt, mille eesmärk on loomade
+        käitumise ja heaolu automatiseeritud jälgimine.
+      </p>
+      <p>
+        Kasutame arvutinägemist ja masinõpet, et tuletada käitumisolekuid
+        otse videost, võimaldades loomade heaolu mitteinvasiivset ja
+        kvantitatiivset hindamist nii üksikisikute, keskkondade kui ka aja lõikes.
+      </p>
+    </section>
+
+    <section data-lang="en">
+      <h2>Why it matters</h2>
+      <p>
+        Animal welfare assessment is often subjective, labor-intensive,
+        and limited in temporal resolution. AnimatouAI aims to provide
+        objective, continuous, and interpretable behavioral metrics derived
+        directly from movement.
+      </p>
+    </section>
+
+    <section data-lang="et" style="display:none;">
+      <h2>Miks see oluline on</h2>
+      <p>
+        Loomade heaolu hindamine on sageli subjektiivne, töömahukas ja
+        ajaliselt piiratud. AnimatouAI eesmärk on pakkuda objektiivseid,
+        pidevaid ja tõlgendatavaid käitumismõõdikuid, mis põhinevad otseselt liikumisel.
+      </p>
+    </section>
+
+    <section>
+      <h2 data-lang="en">Demo (coming soon)</h2>
+      <h2 data-lang="et" style="display:none;">Demo (peagi)</h2>
+
+      <div class="demo-placeholder">
+        <div data-lang="en">
+          Interactive visualization of automatically discovered behavioral states
+          from animal video will appear here.
+        </div>
+        <div data-lang="et" style="display:none;">
+          Siia lisandub interaktiivne visualiseering videost automaatselt
+          tuvastatud käitumisolekutest.
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div data-lang="en">
+        Created by <strong>Maria Kesa</strong>.  
+        Research-driven, non-invasive animal intelligence analysis.
+      </div>
+      <div data-lang="et" style="display:none;">
+        Loodud <strong>Maria Kesa</strong> poolt.  
+        Uurimuspõhine ja mitteinvasiivne lähenemine loomade heaolu mõistmiseks.
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    function setLanguage(lang) {
+      const elements = document.querySelectorAll('[data-lang]');
+      elements.forEach(el => {
+        el.style.display = (el.getAttribute('data-lang') === lang) ? '' : 'none';
+      });
+
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-et').classList.toggle('active', lang === 'et');
+    }
+  </script>
+</body>
+</html>
