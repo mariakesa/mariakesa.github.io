@@ -1,0 +1,27 @@
+“Does a single presynaptic neuron project into different postsynaptic neurons in structured, low-dimensional dendritic patterns?”
+
+“Does presynaptic neuron target dendritic locations non-randomly across its postsynaptic partners?”
+
+do different presynaptic neurons have distinct “projection signatures” in dendritic space?
+
+We propose to characterize dendrites as sorting devices by analyzing how individual presynaptic 
+neurons distribute their synapses across the dendritic trees of their postsynaptic targets. For 
+a fixed presynaptic neuron, we encode each postsynaptic target as a vector describing the dendritic 
+locations (branch identity and normalized arclength) of that presynaptic neuron’s synapses on the target neuron. 
+Stacking these vectors across all postsynaptic targets yields a matrix capturing the axon’s projection pattern into 
+dendritic space. Applying unsupervised dimensionality reduction (e.g., PCA) to this matrix reveals low-dimensional 
+motifs of dendritic targeting, corresponding to structured “projection modes” of the presynaptic neuron. By comparing 
+these embeddings to null models in which synapse locations are randomly permuted along dendrites, we test whether observed 
+targeting patterns reflect non-random, potentially computationally meaningful sorting of inputs by dendritic geometry.
+
+PCA on 
+X
+X finds dominant axes of how this axon distributes synapses in dendritic geometry.
+
+These axes are projection modes:
+
+stereotyped ways the axon “chooses” dendritic subdomains.
+
+We factor each axon’s dendritic targeting pattern into a small set of nonnegative synaptic motifs. 
+Each motif corresponds to a spatially coherent pattern of synapse placement.
+ We then probe the neuron by selectively activating these motifs, treating them as interpretable basis functions for dendritic input.
