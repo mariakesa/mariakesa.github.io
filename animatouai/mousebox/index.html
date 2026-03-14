@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Takens Embedding Viewer</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a21;
+      --text: #e8ecf1;
+      --muted: #a8b0bd;
+      --accent: #5aa9ff;
+      --border: #2a3140;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 18px 0;
+      font-size: 28px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    #plot {
+      width: 100%;
+      height: 560px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    button:hover {
+      opacity: 0.95;
+    }
+
+    #frameLabel {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    #timeSlider {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .frame-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 240px;
+    }
+
+    #videoFrame {
+      max-width: 100%;
+      width: 720px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .error {
+      color: #ff8f8f;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      #plot {
+        height: 420px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Takens Embedding Viewer</h1>
+
+    <div class="card">
+      <div id="plot"></div>
+    </div>
+
+    <div class="card">
+      <div class="controls">
+        <button id="playButton">▶ Play</button>
+        <button id="resetButton">↺ Reset</button>
+        <div id="frameLabel">Loading…</div>
+      </div>
+
+      <input
+        type="range"
+        id="timeSlider"
+        min="0"
+        max="0"
+        step="1"
+        value="0"
+      />
+
+      <div class="hint">
+        Move the slider to scrub through frames, or press play.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="frame-wrap">
+        <img id="videoFrame" alt="Video frame" />
+      </div>
+      <div id="errorBox" class="error"></div>
+    </div>
+  </div>
+
+  <script>
+    let trajectory = [];
+    let T_video = 0;
+    let T_takens = 0;
+    let takens_offset = 0;
+
+    let currentFrame = 0;
+    let isPlaying = false;
+    let timer = null;
+
+    const FPS = 10;
+    const FRAME_INTERVAL_MS = 1000 / FPS;
+
+    const plotDiv = document.getElementById("plot");
+    const slider = document.getElementById("timeSlider");
+    const frameLabel = document.getElementById("frameLabel");
+    const videoFrame = document.getElementById("videoFrame");
+    const playButton = document.getElementById("playButton");
+    const resetButton = document.getElementById("resetButton");
+    const errorBox = document.getElementById("errorBox");
+
+    function clamp(x, lo, hi) {
+      return Math.max(lo, Math.min(hi, x));
+    }
+
+    function getTakensIndex(videoT) {
+      return clamp(videoT - takens_offset, 0, T_takens - 1);
+    }
+
+    function framePath(t) {
+      return `assets/video_frames_kp/frame_${String(t).padStart(6, "0")}.jpg`;
+    }
+
+    function setError(message) {
+      errorBox.textContent = message || "";
+    }
+
+    function updatePlayButton() {
+      playButton.textContent = isPlaying ? "⏸ Pause" : "▶ Play";
+    }
+
+    function stopPlayback() {
+      isPlaying = false;
+      if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+      }
+      updatePlayButton();
+    }
+
+    function startPlayback() {
+      if (isPlaying) return;
+      isPlaying = true;
+      updatePlayButton();
+
+      timer = setInterval(() => {
+        if (currentFrame >= T_video - 1) {
+          stopPlayback();
+          return;
+        }
+        updateUI(currentFrame + 1);
+      }, FRAME_INTERVAL_MS);
+    }
+
+    function renderPlot(videoT) {
+      const tTakens = getTakensIndex(videoT);
+
+      const xs = trajectory.map(p => p[0]);
+      const ys = trajectory.map(p => p[1]);
+      const zs = trajectory.map(p => p[2]);
+
+      const lineTrace = {
+        x: xs,
+        y: ys,
+        z: zs,
+        type: "scatter3d",
+        mode: "lines",
+        name: "Takens trajectory",
+        line: { width: 3 }
+      };
+
+      const pointTrace = {
+        x: [trajectory[tTakens][0]],
+        y: [trajectory[tTakens][1]],
+        z: [trajectory[tTakens][2]],
+        type: "scatter3d",
+        mode: "markers",
+        name: "Current state",
+        marker: {
+          size: 6,
+          color: "red"
+        }
+      };
+
+      const layout = {
+        title: `Takens embedding (video frame ${videoT})`,
+        paper_bgcolor: "#171a21",
+        plot_bgcolor: "#171a21",
+        font: { color: "#e8ecf1" },
+        margin: { l: 0, r: 0, b: 0, t: 40 },
+        scene: {
+          bgcolor: "#171a21",
+          aspectmode: "data",
+          xaxis: {
+            title: "PC1",
+            gridcolor: "#2a3140",
+            zerolinecolor: "#2a3140",
+            backgroundcolor: "#171a21",
+            color: "#e8ecf1"
+          },
+          yaxis: {
+            title: "PC2",
+            gridcolor: "#2a3140",
+            zerolinecolor: "#2a3140",
+            backgroundcolor: "#171a21",
+            color: "#e8ecf1"
+          },
+          zaxis: {
+            title: "PC3",
+            gridcolor: "#2a3140",
+            zerolinecolor: "#2a3140",
+            backgroundcolor: "#171a21",
+            color: "#e8ecf1"
+          }
+        },
+        legend: {
+          bgcolor: "rgba(0,0,0,0)"
+        }
+      };
+
+      Plotly.react(
+        plotDiv,
+        [lineTrace, pointTrace],
+        layout,
+        { responsive: true, displaylogo: false }
+      );
+    }
+
+    function updateFrameImage(videoT) {
+      const src = framePath(videoT);
+      videoFrame.src = src;
+      videoFrame.onerror = () => {
+        setError(`Could not load image: ${src}`);
+      };
+      videoFrame.onload = () => {
+        setError("");
+      };
+    }
+
+    function updateUI(videoT) {
+      currentFrame = clamp(videoT, 0, T_video - 1);
+      slider.value = currentFrame;
+      frameLabel.textContent = `Video frame: ${currentFrame} / ${T_video - 1}`;
+      updateFrameImage(currentFrame);
+      renderPlot(currentFrame);
+    }
+
+    slider.addEventListener("input", (e) => {
+      updateUI(Number(e.target.value));
+    });
+
+    playButton.addEventListener("click", () => {
+      if (isPlaying) {
+        stopPlayback();
+      } else {
+        startPlayback();
+      }
+    });
+
+    resetButton.addEventListener("click", () => {
+      stopPlayback();
+      updateUI(0);
+    });
+
+    async function init() {
+      try {
+        const response = await fetch("trajectory.json");
+        if (!response.ok) {
+          throw new Error(`Failed to load trajectory.json (${response.status})`);
+        }
+
+        const data = await response.json();
+
+        trajectory = data.trajectory;
+        T_video = data.T_video;
+        T_takens = data.T_takens;
+        takens_offset = data.takens_offset;
+
+        if (!Array.isArray(trajectory) || trajectory.length === 0) {
+          throw new Error("trajectory.json has no trajectory data.");
+        }
+
+        slider.max = T_video - 1;
+        updateUI(0);
+      } catch (err) {
+        frameLabel.textContent = "Failed to load data";
+        setError(String(err));
+        console.error(err);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
