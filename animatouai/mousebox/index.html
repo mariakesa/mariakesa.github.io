@@ -164,7 +164,7 @@
     <div class="card">
       <div class="frame-wrap">
         <video id="mouseVideo" controls preload="auto">
-          <source src="animatouai/mousebox/assets/session.mp4" type="video/mp4" />
+          <source src="./assets/session.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
@@ -196,8 +196,8 @@
   </div>
 
   <script>
-    const BASE_PATH = "animatouai/mousebox";
-    const VIDEO_FPS = 10; // Must match the FPS used to create session.mp4
+    const BASE_PATH = ".";
+    const VIDEO_FPS = 10;
 
     let trajectory = [];
     let T_video = 0;
@@ -226,7 +226,11 @@
     }
 
     function getCurrentVideoFrame() {
-      return clamp(Math.floor(mouseVideo.currentTime * VIDEO_FPS), 0, Math.max(T_video - 1, 0));
+      return clamp(
+        Math.floor(mouseVideo.currentTime * VIDEO_FPS),
+        0,
+        Math.max(T_video - 1, 0)
+      );
     }
 
     function initPlot() {
@@ -304,14 +308,19 @@
     }
 
     function updateMarker(videoFrame) {
+      if (!trajectory.length) return;
+
       const tTakens = getTakensIndex(videoFrame);
+      const point = trajectory[tTakens];
+
+      if (!point) return;
 
       Plotly.restyle(
         plotDiv,
         {
-          x: [[trajectory[tTakens][0]]],
-          y: [[trajectory[tTakens][1]]],
-          z: [[trajectory[tTakens][2]]]
+          x: [[point[0]]],
+          y: [[point[1]]],
+          z: [[point[2]]]
         },
         [1]
       );
@@ -368,7 +377,7 @@
     });
 
     mouseVideo.addEventListener("error", () => {
-      setError("Could not load video file. Check the path to session.mp4.");
+      setError("Could not load video file. Check that ./assets/session.mp4 exists.");
     });
 
     async function init() {
