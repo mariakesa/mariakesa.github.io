@@ -91,7 +91,7 @@ playButton.addEventListener("click", () => {
         playing = false;
         clearInterval(timer);
       }
-    }, 100);
+    }, 300);
   } else {
     clearInterval(timer);
   }
