@@ -88,12 +88,13 @@
       min-height: 240px;
     }
 
-    #videoFrame {
+    #mouseVideo {
       max-width: 100%;
       width: 720px;
       border-radius: 12px;
       border: 1px solid var(--border);
       display: block;
+      background: black;
     }
 
     .hint {
@@ -107,6 +108,16 @@
       white-space: pre-wrap;
       font-family: monospace;
       font-size: 14px;
+    }
+
+    .meta {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .meta a {
+      color: var(--accent);
     }
 
     @media (max-width: 768px) {
@@ -131,6 +142,7 @@
     <div class="card">
       <div class="controls">
         <button id="playButton">▶ Play</button>
+        <button id="pauseButton">⏸ Pause</button>
         <button id="resetButton">↺ Reset</button>
         <div id="frameLabel">Loading…</div>
       </div>
@@ -140,41 +152,64 @@
         id="timeSlider"
         min="0"
         max="0"
-        step="1"
+        step="0.001"
         value="0"
       />
 
       <div class="hint">
-        Move the slider to scrub through frames, or press play.
+        Scrub the video timeline or use play/pause. The red marker follows the current video frame.
       </div>
     </div>
 
     <div class="card">
       <div class="frame-wrap">
-        <img id="videoFrame" alt="Video frame" />
+        <video id="mouseVideo" controls preload="auto">
+          <source src="animatouai/mousebox/assets/session.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
       <div id="errorBox" class="error"></div>
+    </div>
+
+    <div class="card meta">
+      <p>
+        Videos came from the TU Berlin dataset:
+        <em>Mouse Lockbox Dataset: Behavior Recognition for Mice Solving Lockboxes</em>
+        by Reiske, Patrik; Boon, Marcus N.; Andresen, Niek; Traverso, Sole; Hohlbaum, Katharina;
+        Lewejohann, Lars; Thöne-Reineke, Christa; Hellwich, Olaf; Sprekeler, Henning;
+        Bekemeier, Clara (Contributor); Meier, Sophia (Contributor); Detmers, Jule (Contributor);
+        Pauli, Andreas (Contributor).
+      </p>
+      <p>
+        License:
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">
+          CC BY 4.0
+        </a>
+      </p>
+      <p>
+        Dataset:
+        <a href="https://depositonce.tu-berlin.de/items/1c03ecef-c527-4f4f-b965-2175c67398a7" target="_blank" rel="noopener noreferrer">
+          TU Berlin DepositOnce
+        </a>
+      </p>
     </div>
   </div>
 
   <script>
+    const BASE_PATH = "animatouai/mousebox";
+    const VIDEO_FPS = 10; // Must match the FPS used to create session.mp4
+
     let trajectory = [];
     let T_video = 0;
     let T_takens = 0;
     let takens_offset = 0;
 
-    let currentFrame = 0;
-    let isPlaying = false;
-    let timer = null;
-
-    const FPS = 10;
-    const FRAME_INTERVAL_MS = 1000 / FPS;
-
     const plotDiv = document.getElementById("plot");
     const slider = document.getElementById("timeSlider");
     const frameLabel = document.getElementById("frameLabel");
-    const videoFrame = document.getElementById("videoFrame");
+    const mouseVideo = document.getElementById("mouseVideo");
     const playButton = document.getElementById("playButton");
+    const pauseButton = document.getElementById("pauseButton");
     const resetButton = document.getElementById("resetButton");
     const errorBox = document.getElementById("errorBox");
 
@@ -182,48 +217,19 @@
       return Math.max(lo, Math.min(hi, x));
     }
 
-    function getTakensIndex(videoT) {
-      return clamp(videoT - takens_offset, 0, T_takens - 1);
-    }
-
-    function framePath(t) {
-      return `assets/video_frames_kp/frame_${String(t).padStart(6, "0")}.jpg`;
-    }
-
     function setError(message) {
       errorBox.textContent = message || "";
     }
 
-    function updatePlayButton() {
-      playButton.textContent = isPlaying ? "⏸ Pause" : "▶ Play";
+    function getTakensIndex(videoFrame) {
+      return clamp(videoFrame - takens_offset, 0, T_takens - 1);
     }
 
-    function stopPlayback() {
-      isPlaying = false;
-      if (timer !== null) {
-        clearInterval(timer);
-        timer = null;
-      }
-      updatePlayButton();
+    function getCurrentVideoFrame() {
+      return clamp(Math.floor(mouseVideo.currentTime * VIDEO_FPS), 0, Math.max(T_video - 1, 0));
     }
 
-    function startPlayback() {
-      if (isPlaying) return;
-      isPlaying = true;
-      updatePlayButton();
-
-      timer = setInterval(() => {
-        if (currentFrame >= T_video - 1) {
-          stopPlayback();
-          return;
-        }
-        updateUI(currentFrame + 1);
-      }, FRAME_INTERVAL_MS);
-    }
-
-    function renderPlot(videoT) {
-      const tTakens = getTakensIndex(videoT);
-
+    function initPlot() {
       const xs = trajectory.map(p => p[0]);
       const ys = trajectory.map(p => p[1]);
       const zs = trajectory.map(p => p[2]);
@@ -238,10 +244,12 @@
         line: { width: 3 }
       };
 
+      const t0 = getTakensIndex(0);
+
       const pointTrace = {
-        x: [trajectory[tTakens][0]],
-        y: [trajectory[tTakens][1]],
-        z: [trajectory[tTakens][2]],
+        x: [trajectory[t0][0]],
+        y: [trajectory[t0][1]],
+        z: [trajectory[t0][2]],
         type: "scatter3d",
         mode: "markers",
         name: "Current state",
@@ -252,7 +260,7 @@
       };
 
       const layout = {
-        title: `Takens embedding (video frame ${videoT})`,
+        title: "Takens embedding (video frame 0)",
         paper_bgcolor: "#171a21",
         plot_bgcolor: "#171a21",
         font: { color: "#e8ecf1" },
@@ -287,7 +295,7 @@
         }
       };
 
-      Plotly.react(
+      Plotly.newPlot(
         plotDiv,
         [lineTrace, pointTrace],
         layout,
@@ -295,45 +303,77 @@
       );
     }
 
-    function updateFrameImage(videoT) {
-      const src = framePath(videoT);
-      videoFrame.src = src;
-      videoFrame.onerror = () => {
-        setError(`Could not load image: ${src}`);
-      };
-      videoFrame.onload = () => {
-        setError("");
-      };
+    function updateMarker(videoFrame) {
+      const tTakens = getTakensIndex(videoFrame);
+
+      Plotly.restyle(
+        plotDiv,
+        {
+          x: [[trajectory[tTakens][0]]],
+          y: [[trajectory[tTakens][1]]],
+          z: [[trajectory[tTakens][2]]]
+        },
+        [1]
+      );
+
+      Plotly.relayout(plotDiv, {
+        title: `Takens embedding (video frame ${videoFrame})`
+      });
     }
 
-    function updateUI(videoT) {
-      currentFrame = clamp(videoT, 0, T_video - 1);
-      slider.value = currentFrame;
-      frameLabel.textContent = `Video frame: ${currentFrame} / ${T_video - 1}`;
-      updateFrameImage(currentFrame);
-      renderPlot(currentFrame);
+    function updateUIFromVideo() {
+      const frame = getCurrentVideoFrame();
+      slider.value = mouseVideo.currentTime;
+      frameLabel.textContent = `Video frame: ${frame} / ${T_video - 1} | time: ${mouseVideo.currentTime.toFixed(2)} s`;
+      updateMarker(frame);
     }
 
-    slider.addEventListener("input", (e) => {
-      updateUI(Number(e.target.value));
-    });
-
-    playButton.addEventListener("click", () => {
-      if (isPlaying) {
-        stopPlayback();
-      } else {
-        startPlayback();
+    playButton.addEventListener("click", async () => {
+      try {
+        await mouseVideo.play();
+      } catch (err) {
+        console.error(err);
+        setError(`Could not start video playback: ${err}`);
       }
     });
 
+    pauseButton.addEventListener("click", () => {
+      mouseVideo.pause();
+    });
+
     resetButton.addEventListener("click", () => {
-      stopPlayback();
-      updateUI(0);
+      mouseVideo.pause();
+      mouseVideo.currentTime = 0;
+      updateUIFromVideo();
+    });
+
+    slider.addEventListener("input", (e) => {
+      mouseVideo.currentTime = Number(e.target.value);
+      updateUIFromVideo();
+    });
+
+    mouseVideo.addEventListener("timeupdate", () => {
+      updateUIFromVideo();
+    });
+
+    mouseVideo.addEventListener("seeked", () => {
+      updateUIFromVideo();
+    });
+
+    mouseVideo.addEventListener("loadedmetadata", () => {
+      slider.min = 0;
+      slider.max = mouseVideo.duration;
+      slider.step = 1 / VIDEO_FPS;
+      setError("");
+    });
+
+    mouseVideo.addEventListener("error", () => {
+      setError("Could not load video file. Check the path to session.mp4.");
     });
 
     async function init() {
       try {
-        const response = await fetch("trajectory.json");
+        const response = await fetch(`${BASE_PATH}/trajectory.json`);
         if (!response.ok) {
           throw new Error(`Failed to load trajectory.json (${response.status})`);
         }
@@ -349,8 +389,9 @@
           throw new Error("trajectory.json has no trajectory data.");
         }
 
-        slider.max = T_video - 1;
-        updateUI(0);
+        initPlot();
+        updateMarker(0);
+        frameLabel.textContent = `Video frame: 0 / ${T_video - 1} | time: 0.00 s`;
       } catch (err) {
         frameLabel.textContent = "Failed to load data";
         setError(String(err));
@@ -360,11 +401,5 @@
 
     init();
   </script>
-
-<p>Videos came from TU Berlin dataset ( Mouse Lockbox Dataset: Behavior Recognition for Mice Solving Lockboxes
-Reiske, Patrik; Boon, Marcus N.; Andresen, Niek; Traverso, Sole; Hohlbaum, Katharina; Lewejohann, Lars; Thöne-Reineke, Christa; Hellwich, Olaf; Sprekeler, Henning; Bekemeier, Clara (Contributor); Meier, Sophia (Contributor); Detmers, Jule (Contributor); Pauli, Andreas (Contributor))</p>
-</p>
-<p>License of the videos: https://creativecommons.org/licenses/by/4.0/ https://creativecommons.org/licenses/by/4.0/</p>
-<p>Link to data: https://depositonce.tu-berlin.de/items/1c03ecef-c527-4f4f-b965-2175c67398a7</p>
 </body>
 </html>

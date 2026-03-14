@@ -1,48 +1,28 @@
 const BASE_PATH = "animatouai/mousebox";
-const PLAYBACK_MS = 300;
-const PRELOAD_RADIUS = 4;
+const VIDEO_FPS = 10; // must match the fps used when creating session.mp4
 
 let trajectory = [];
 let T_video = 0;
 let T_takens = 0;
 let takens_offset = 0;
 
-let currentFrame = 0;
-let playing = false;
-let timer = null;
-
-const frameCache = new Map();
-
 const plotDiv = document.getElementById("plot");
 const slider = document.getElementById("timeSlider");
 const frameLabel = document.getElementById("frameLabel");
-const videoFrame = document.getElementById("videoFrame");
 const playButton = document.getElementById("playButton");
+const pauseButton = document.getElementById("pauseButton");
+const mouseVideo = document.getElementById("mouseVideo");
 
 function clamp(x, a, b) {
   return Math.max(a, Math.min(b, x));
 }
 
-function getTakensIndex(videoT) {
-  return clamp(videoT - takens_offset, 0, T_takens - 1);
+function getTakensIndex(videoFrame) {
+  return clamp(videoFrame - takens_offset, 0, T_takens - 1);
 }
 
-function framePath(t) {
-  return `${BASE_PATH}/assets/video_frames_kp/frame_${String(t).padStart(6, "0")}.jpg`;
-}
-
-function preloadFrame(t) {
-  if (t < 0 || t >= T_video || frameCache.has(t)) return;
-
-  const img = new Image();
-  img.src = framePath(t);
-  frameCache.set(t, img);
-}
-
-function preloadNearbyFrames(t, radius = PRELOAD_RADIUS) {
-  for (let k = 1; k <= radius; k++) {
-    preloadFrame(t + k);
-  }
+function currentVideoFrame() {
+  return clamp(Math.floor(mouseVideo.currentTime * VIDEO_FPS), 0, T_video - 1);
 }
 
 function initPlot() {
@@ -86,8 +66,8 @@ function initPlot() {
   Plotly.newPlot(plotDiv, [traceLine, tracePoint], layout, { responsive: true });
 }
 
-function updateMarker(videoT) {
-  const tTakens = getTakensIndex(videoT);
+function updateMarkerFromFrame(videoFrame) {
+  const tTakens = getTakensIndex(videoFrame);
 
   Plotly.restyle(
     plotDiv,
@@ -100,67 +80,43 @@ function updateMarker(videoT) {
   );
 
   Plotly.relayout(plotDiv, {
-    title: `Takens embedding (video frame ${videoT})`
+    title: `Takens embedding (video frame ${videoFrame})`
   });
 }
 
-function updateImage(videoT) {
-  const src = framePath(videoT);
-  videoFrame.src = src;
+function updateUIFromVideo() {
+  const frame = currentVideoFrame();
+  slider.value = mouseVideo.currentTime;
+  frameLabel.textContent = `Video frame: ${frame} / ${T_video - 1} | time: ${mouseVideo.currentTime.toFixed(2)} s`;
+  updateMarkerFromFrame(frame);
 }
-
-function updateUI(videoT) {
-  currentFrame = clamp(videoT, 0, T_video - 1);
-  slider.value = currentFrame;
-  frameLabel.textContent = `Video frame: ${currentFrame} / ${T_video - 1}`;
-
-  updateImage(currentFrame);
-  updateMarker(currentFrame);
-  preloadNearbyFrames(currentFrame);
-}
-
-function stopPlayback() {
-  playing = false;
-  if (timer !== null) {
-    clearTimeout(timer);
-    timer = null;
-  }
-  playButton.textContent = "▶ Play";
-}
-
-function stepPlayback() {
-  if (!playing) return;
-
-  if (currentFrame >= T_video - 1) {
-    stopPlayback();
-    return;
-  }
-
-  updateUI(currentFrame + 1);
-
-  timer = setTimeout(() => {
-    stepPlayback();
-  }, PLAYBACK_MS);
-}
-
-slider.addEventListener("input", (e) => {
-  stopPlayback();
-  updateUI(Number(e.target.value));
-});
 
 playButton.addEventListener("click", () => {
-  if (playing) {
-    stopPlayback();
-  } else {
-    playing = true;
-    playButton.textContent = "⏸ Pause";
-    stepPlayback();
-  }
+  mouseVideo.play();
 });
 
-videoFrame.onerror = () => {
-  console.error("Failed to load image:", videoFrame.src);
-};
+pauseButton.addEventListener("click", () => {
+  mouseVideo.pause();
+});
+
+slider.addEventListener("input", (e) => {
+  mouseVideo.currentTime = Number(e.target.value);
+  updateUIFromVideo();
+});
+
+mouseVideo.addEventListener("timeupdate", () => {
+  updateUIFromVideo();
+});
+
+mouseVideo.addEventListener("seeked", () => {
+  updateUIFromVideo();
+});
+
+mouseVideo.addEventListener("loadedmetadata", () => {
+  slider.min = 0;
+  slider.max = mouseVideo.duration;
+  slider.step = 1 / VIDEO_FPS;
+});
 
 fetch(`${BASE_PATH}/trajectory.json`)
   .then(response => {
@@ -175,10 +131,8 @@ fetch(`${BASE_PATH}/trajectory.json`)
     T_takens = data.T_takens;
     takens_offset = data.takens_offset;
 
-    slider.max = T_video - 1;
-
     initPlot();
-    updateUI(0);
+    updateMarkerFromFrame(0);
   })
   .catch(err => {
     console.error(err);
