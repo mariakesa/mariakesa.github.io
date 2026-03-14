@@ -1,3 +1,5 @@
+const BASE_PATH = "animatouai/mousebox";
+
 let trajectory = [];
 let T_video = 0;
 let T_takens = 0;
@@ -22,7 +24,7 @@ function getTakensIndex(videoT) {
 }
 
 function framePath(t) {
-  return `assets/video_frames_kp/frame_${String(t).padStart(6, "0")}.jpg`;
+  return `${BASE_PATH}/assets/video_frames_kp/frame_${String(t).padStart(6, "0")}.jpg`;
 }
 
 function renderPlot(videoT) {
@@ -95,8 +97,13 @@ playButton.addEventListener("click", () => {
   }
 });
 
-fetch("trajectory.json")
-  .then(response => response.json())
+fetch(`${BASE_PATH}/trajectory.json`)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Failed to load trajectory.json: ${response.status}`);
+    }
+    return response.json();
+  })
   .then(data => {
     trajectory = data.trajectory;
     T_video = data.T_video;
@@ -105,4 +112,8 @@ fetch("trajectory.json")
 
     slider.max = T_video - 1;
     updateUI(0);
+  })
+  .catch(err => {
+    console.error(err);
+    frameLabel.textContent = "Failed to load trajectory data";
   });
