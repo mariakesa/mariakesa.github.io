@@ -15,10 +15,15 @@
 }
 
 
+body {
+    text-align: center;
+}
+
 #title {
     font-family: 'azedobold';
     font-size: 60px;
     letter-spacing: 8px;
+    text-align: center;
 }
 
 #title-span {
@@ -30,10 +35,19 @@
     line-height: 80px;
 }
 
+.canvas,
+#chart {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+
 .intro-text {
     font-family: 'Merriweather', sans-serif; /* Specify a fallback sans-serif font */
     font-size: 22px;
     display: block;
     width: 800px;
     padding-bottom: 50px;
+    margin: 0 auto;
+    text-align: center;
 }
