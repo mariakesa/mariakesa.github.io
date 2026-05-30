@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ViT Patch Goblin Oscilloscope</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 32px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #111;
+      color: #eee;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    p {
+      color: #bbb;
+      line-height: 1.5;
+      max-width: 900px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .panel {
+      background: #1b1b1b;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .image-wrap {
+      position: relative;
+      width: 392px;
+      height: 392px;
+    }
+
+    #bear-image {
+      width: 392px;
+      height: 392px;
+      object-fit: cover;
+      display: block;
+      border-radius: 12px;
+      filter: grayscale(1);
+    }
+
+    #grid-overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 392px;
+      height: 392px;
+      pointer-events: all;
+    }
+
+    .patch-rect {
+      fill: transparent;
+      stroke: rgba(255, 255, 255, 0.18);
+      stroke-width: 1;
+      cursor: pointer;
+    }
+
+    .patch-rect:hover {
+      stroke: #fff;
+      stroke-width: 2;
+      fill: rgba(255, 255, 255, 0.08);
+    }
+
+    .patch-rect.selected {
+      stroke: #ffcc66;
+      stroke-width: 3;
+      fill: rgba(255, 204, 102, 0.18);
+    }
+
+    .info {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .wave-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .wave-card {
+      background: #151515;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .wave-title {
+      font-size: 14px;
+      color: #ddd;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    svg {
+      display: block;
+    }
+
+    .axis path,
+    .axis line {
+      stroke: #444;
+    }
+
+    .axis text {
+      fill: #888;
+      font-size: 10px;
+    }
+
+    .wave-line {
+      fill: none;
+      stroke: #8ecae6;
+      stroke-width: 1.5;
+    }
+
+    .zero-line {
+      stroke: #555;
+      stroke-dasharray: 3 3;
+    }
+
+    .heatmap-cell {
+      stroke: #222;
+      stroke-width: 1;
+    }
+
+    .small-note {
+      color: #888;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>ViT Patch Oscilloscope</h1>
+
+  <p>
+    Click a patch on the bear image. The selected patch becomes a raw pixel signal,
+    then a patch embedding, then three Q/K/V communication goblins. The attention
+    heatmap shows where this patch attends in layer 0.
+  </p>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="image-wrap">
+        <img id="bear-image" src="bear.png" alt="Bear image" />
+        <svg id="grid-overlay"></svg>
+      </div>
+
+      <div class="info" id="patch-info">
+        Loading goblins...
+      </div>
+
+      <div class="small-note">
+        Image shown at 392×392 for display, but ViT data uses 224×224 with a 14×14 patch grid.
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="wave-grid">
+        <div class="wave-card">
+          <div class="wave-title">
+            <span>Raw flattened patch waveform</span>
+            <span id="raw-label"></span>
+          </div>
+          <svg id="raw-wave"></svg>
+        </div>
+
+        <div class="wave-card">
+          <div class="wave-title">
+            <span>Patch embedding waveform</span>
+            <span id="embedding-label"></span>
+          </div>
+          <svg id="embedding-wave"></svg>
+        </div>
+
+        <div class="wave-card">
+          <div class="wave-title">
+            <span>Query waveform Q</span>
+            <span id="q-label"></span>
+          </div>
+          <svg id="q-wave"></svg>
+        </div>
+
+        <div class="wave-card">
+          <div class="wave-title">
+            <span>Key waveform K</span>
+            <span id="k-label"></span>
+          </div>
+          <svg id="k-wave"></svg>
+        </div>
+
+        <div class="wave-card">
+          <div class="wave-title">
+            <span>Value waveform V</span>
+            <span id="v-label"></span>
+          </div>
+          <svg id="v-wave"></svg>
+        </div>
+
+        <div class="wave-card">
+          <div class="wave-title">
+            <span>Attention heatmap from selected patch</span>
+            <span id="attention-label"></span>
+          </div>
+          <svg id="attention-heatmap"></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const displaySize = 392;
+    const waveWidth = 760;
+    const waveHeight = 120;
+    const heatmapSize = 280;
+
+    function drawWaveform(selector, values) {
+      const svg = d3.select(selector);
+      svg.selectAll("*").remove();
+
+      svg
+        .attr("width", waveWidth)
+        .attr("height", waveHeight);
+
+      const margin = { top: 10, right: 16, bottom: 20, left: 36 };
+      const innerWidth = waveWidth - margin.left - margin.right;
+      const innerHeight = waveHeight - margin.top - margin.bottom;
+
+      const g = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const x = d3.scaleLinear()
+        .domain([0, values.length - 1])
+        .range([0, innerWidth]);
+
+      const extent = d3.extent(values);
+      const maxAbs = Math.max(Math.abs(extent[0]), Math.abs(extent[1]), 1e-6);
+
+      const y = d3.scaleLinear()
+        .domain([-maxAbs, maxAbs])
+        .range([innerHeight, 0])
+        .nice();
+
+      const line = d3.line()
+        .x((d, i) => x(i))
+        .y(d => y(d));
+
+      g.append("line")
+        .attr("class", "zero-line")
+        .attr("x1", 0)
+        .attr("x2", innerWidth)
+        .attr("y1", y(0))
+        .attr("y2", y(0));
+
+      g.append("path")
+        .datum(values)
+        .attr("class", "wave-line")
+        .attr("d", line);
+
+      g.append("g")
+        .attr("class", "axis")
+        .attr("transform", `translate(0,${innerHeight})`)
+        .call(d3.axisBottom(x).ticks(6));
+
+      g.append("g")
+        .attr("class", "axis")
+        .call(d3.axisLeft(y).ticks(4));
+    }
+
+    function drawAttentionHeatmap(selector, grid, selectedPatch = null) {
+        const svg = d3.select(selector);
+        svg.selectAll("*").remove();
+
+        svg
+            .attr("width", heatmapSize)
+            .attr("height", heatmapSize);
+
+        const rows = grid.length;
+        const cols = grid[0].length;
+        const cellSize = heatmapSize / cols;
+
+        const flat = grid.flat().filter(Number.isFinite).sort(d3.ascending);
+
+        // Clip the color scale so one giant attention value does not dominate.
+        const lo = d3.quantile(flat, 0.05);
+        const hi = d3.quantile(flat, 0.98);
+
+        const color = d3.scaleSequential(d3.interpolateMagma)
+            .domain([lo, hi])
+            .clamp(true);
+
+        const g = svg.append("g");
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+            g.append("rect")
+                .attr("class", "heatmap-cell")
+                .attr("x", c * cellSize)
+                .attr("y", r * cellSize)
+                .attr("width", cellSize)
+                .attr("height", cellSize)
+                .attr("fill", color(grid[r][c]));
+            }
+        }
+
+        // Optional: outline selected query patch.
+        if (selectedPatch) {
+            g.append("rect")
+            .attr("x", selectedPatch.col * cellSize)
+            .attr("y", selectedPatch.row * cellSize)
+            .attr("width", cellSize)
+            .attr("height", cellSize)
+            .attr("fill", "none")
+            .attr("stroke", "#ffffff")
+            .attr("stroke-width", 2);
+        }   
+    }
+
+    function drawPatchGrid(data, onSelectPatch) {
+      const svg = d3.select("#grid-overlay");
+      svg.selectAll("*").remove();
+
+      svg
+        .attr("width", displaySize)
+        .attr("height", displaySize);
+
+      const gridWidth = data.grid_width;
+      const gridHeight = data.grid_height;
+      const cellWidth = displaySize / gridWidth;
+      const cellHeight = displaySize / gridHeight;
+
+      svg.selectAll("rect")
+        .data(data.patches)
+        .enter()
+        .append("rect")
+        .attr("class", "patch-rect")
+        .attr("x", d => d.col * cellWidth)
+        .attr("y", d => d.row * cellHeight)
+        .attr("width", cellWidth)
+        .attr("height", cellHeight)
+        .on("click", function(event, d) {
+          svg.selectAll(".patch-rect").classed("selected", false);
+          d3.select(this).classed("selected", true);
+          onSelectPatch(d);
+        });
+
+      const firstRect = svg.select(".patch-rect");
+      firstRect.classed("selected", true);
+    }
+
+    function updateSelectedPatch(patch, data) {
+      d3.select("#patch-info").html(`
+        <strong>Selected patch:</strong> index ${patch.index}<br>
+        row ${patch.row}, col ${patch.col}<br>
+        original ViT-space position: x=${patch.x}, y=${patch.y}<br>
+        model: ${data.model_name}, layer ${data.layer_index}
+      `);
+
+      d3.select("#raw-label").text(`${patch.raw_waveform.length} dims`);
+      d3.select("#embedding-label").text(`${patch.embedding.length} dims`);
+      d3.select("#q-label").text(`${patch.q.length} dims`);
+      d3.select("#k-label").text(`${patch.k.length} dims`);
+      d3.select("#v-label").text(`${patch.v.length} dims`);
+      d3.select("#attention-label").text(`${data.grid_height}×${data.grid_width}`);
+
+      drawWaveform("#raw-wave", patch.raw_waveform);
+      drawWaveform("#embedding-wave", patch.embedding);
+      drawWaveform("#q-wave", patch.q);
+      drawWaveform("#k-wave", patch.k);
+      drawWaveform("#v-wave", patch.v);
+      drawAttentionHeatmap("#attention-heatmap", patch.attention_grid);
+    }
+
+    d3.json("bear_vit_goblins.json").then(data => {
+      const patches = data.patches;
+
+      console.log(data.grid_width, data.grid_height);
+      console.log(patches[0].embedding);
+
+      drawPatchGrid(data, patch => updateSelectedPatch(patch, data));
+      updateSelectedPatch(patches[0], data);
+    }).catch(error => {
+      console.error(error);
+      d3.select("#patch-info").text(
+        "Could not load bear_vit_goblins.json. Make sure you are running a local server, not opening index.html directly."
+      );
+    });
+  </script>
+</body>
+</html>
