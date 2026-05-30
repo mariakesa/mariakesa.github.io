@@ -172,6 +172,14 @@
       <div class="small-note">
         Image shown at 392×392 for display, but ViT data uses 224×224 with a 14×14 patch grid.
       </div>
+
+      <div class="wave-card" style="margin-top: 18px; width: 392px; box-sizing: border-box;">
+        <div class="wave-title">
+          <span>Attention heatmap from selected patch</span>
+          <span id="attention-label"></span>
+        </div>
+        <svg id="attention-heatmap"></svg>
+      </div>
     </div>
 
     <div class="panel">
@@ -215,14 +223,6 @@
           </div>
           <svg id="v-wave"></svg>
         </div>
-
-        <div class="wave-card">
-          <div class="wave-title">
-            <span>Attention heatmap from selected patch</span>
-            <span id="attention-label"></span>
-          </div>
-          <svg id="attention-heatmap"></svg>
-        </div>
       </div>
     </div>
   </div>
@@ -231,7 +231,7 @@
     const displaySize = 392;
     const waveWidth = 760;
     const waveHeight = 120;
-    const heatmapSize = 280;
+    const heatmapSize = 368;
 
     function drawWaveform(selector, values) {
       const svg = d3.select(selector);
