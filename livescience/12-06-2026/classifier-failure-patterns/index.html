@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classifier Failure Patterns</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --ink: #2a2a2a;
+      --ink-soft: #555;
+      --ink-faint: #888;
+      --rule: #e7e7e2;
+      --accent: #8a3b2e;
+      --bg: #fdfdfb;
+      --code-bg: #1c1d22;
+      --code-fg: #e6e6e6;
+      --measure: 720px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0 auto;
+      max-width: var(--measure);
+      padding: 72px 24px 120px;
+      font-family: "Lora", Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      line-height: 1.7;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    h1, h2, h3 {
+      font-weight: 600;
+      line-height: 1.25;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      margin: 0 0 0.25em;
+    }
+
+    .subtitle {
+      font-style: italic;
+      color: var(--ink-faint);
+      font-size: 1.05rem;
+      margin: 0 0 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin: 3.2rem 0 1rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+    }
+
+    h2 .num {
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      margin-right: 0.5rem;
+    }
+
+    p { margin: 1.15rem 0; }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(138, 59, 46, 0.3);
+      transition: border-color 0.15s ease;
+      word-break: break-word;
+    }
+    a:hover { border-bottom-color: var(--accent); }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-fg);
+      padding: 1.1rem 1.3rem;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
+      margin: 1.6rem 0;
+    }
+
+    code {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    pre code { font-size: inherit; }
+
+    /* inline code */
+    p code, li code, td code {
+      font-size: 0.85em;
+      background: #f0efe9;
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      color: #444;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin: 1.6rem 0;
+      width: 100%;
+      font-size: 0.95rem;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--rule);
+      padding: 0.7rem 1rem;
+      text-align: left;
+    }
+
+    th {
+      background: #f7f6f1;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.9rem;
+      margin: 1.8rem 0 2.8rem;
+    }
+
+    .image-card {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .image-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #eee;
+    }
+
+    .caption {
+      padding: 0.5rem 0.65rem;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.02em;
+      color: var(--ink-faint);
+      border-top: 1px solid var(--rule);
+    }
+
+    .note {
+      background: #f8f5ee;
+      border-left: 3px solid var(--accent);
+      padding: 0.9rem 1.2rem;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 600px) {
+      body { font-size: 17px; padding: 48px 18px 80px; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Classifier Failure Patterns</h1>
+  <p class="subtitle">Where ViT-derived labels and human labels disagree — and what it does to a decoder.</p>
+
+  <p>
+    The Vision Transformer has an interesting quirk in its 1000 object labelset. The first 397 labels refer to animate "objects" and
+    the rest are inanimate objects.
+  </p>
+
+  <p>
+    From the label set
+    <a href="https://github.com/anishathalye/imagenet-simple-labels/blob/master/imagenet-simple-labels.json">
+      https://github.com/anishathalye/imagenet-simple-labels/blob/master/imagenet-simple-labels.json
+    </a>
+    (numpy indexing starts at 0):
+  </p>
+
+  <pre><code>394--&gt;"sturgeon",
+395--&gt;"garfish",
+396--&gt;"lionfish",
+397--&gt;"pufferfish",
+--------------------&gt; Decision boundary between animate and inanimate
+398--&gt;"abacus",
+399--&gt;"abaya",
+400--&gt;"academic gown",
+401--&gt;"accordion",
+402--&gt;"acoustic guitar",
+403--&gt;"aircraft carrier"</code></pre>
+
+  <p>
+    This created an opportunity for me to automatically label the Allen stimulus imageset and use
+    those labels in training the logistic regression classifier. Specifically, I simply checked if the maximal
+    logit was below or above the index 397 in the labels. Later, I started worrying if the labels are correct
+    and I manually labeled the 118 natural scenes images. This procedure permits an interesting analysis to compare
+    the machine labeled training data and human labeled training data.
+  </p>
+
+  <p>
+    First, the question: do ViT labels align with human labels? The answer is that ViT makes a one-sided error
+    on 7 inanimate images (according to the human label) labeling them as animate. Here are the images:
+  </p>
+
+  <div class="image-grid">
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_064.png" alt="scene 064" />
+      <figcaption class="caption">scene_064.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_070.png" alt="scene 070" />
+      <figcaption class="caption">scene_070.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_076.png" alt="scene 076" />
+      <figcaption class="caption">scene_076.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_078.png" alt="scene 078" />
+      <figcaption class="caption">scene_078.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_093.png" alt="scene 093" />
+      <figcaption class="caption">scene_093.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_107.png" alt="scene 107" />
+      <figcaption class="caption">scene_107.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_110.png" alt="scene 110" />
+      <figcaption class="caption">scene_110.png</figcaption>
+    </figure>
+  </div>
+
+  <p>This is the confusion matrix:</p>
+
+  <pre><code>                 ViT inanimate   ViT animate
+Human inanimate       55              7
+Human animate          0             56</code></pre>
+
+  <p>
+    When we train a logistic regression model with the Adam optimizer on ViT derived labels (what I did as a first shot),
+    we get these stats with respect to human ground truth:
+  </p>
+
+  <pre><code>Adam accuracy: 0.6949
+Adam bal acc:  0.6950
+Adam AUC:      0.7921</code></pre>
+
+  <p>
+    Training that same classifier on human derived labels gives slightly better stats (with respect to human groundtruth):
+  </p>
+
+  <pre><code>Adam accuracy: 0.7203
+Adam bal acc:  0.7183
+Adam AUC:      0.8004</code></pre>
+
+  <p>
+    Let's next decompose the evaluation into consensus images (both ViT and human annotations agree) and the 7 relabeled
+    images.
+  </p>
+
+  <p>
+    It turns out that both classifiers behave the same on the relabeled images.
+  </p>
+
+  <pre><code>idx | human | vit | human-decoder | vit-decoder
+064 |   0   |  1  |       0       |      0
+070 |   0   |  1  |       1       |      1
+076 |   0   |  1  |       0       |      0
+078 |   0   |  1  |       1       |      1
+093 |   0   |  1  |       1       |      1
+107 |   0   |  1  |       0       |      0
+110 |   0   |  1  |       1       |      1</code></pre>
+
+  <p>
+    However on the consensus images, the human-trained classifier wins by 3 images.
+  </p>
+
+  <pre><code>Human-trained decoder accuracy: 0.7387
+ViT-trained decoder accuracy:   0.7117
+Difference: +0.0270 = 3 images</code></pre>
+
+  <p>
+    The errors decompose like this:
+  </p>
+
+  <h2><span class="num">1.</span>Human-trained correct, ViT-trained wrong</h2>
+
+  <pre><code>images [ 14  25  74  83  90 102 116]</code></pre>
+
+  <div class="image-grid">
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_014.png" alt="scene 014" />
+      <figcaption class="caption">scene_014.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_025.png" alt="scene 025" />
+      <figcaption class="caption">scene_025.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_074.png" alt="scene 074" />
+      <figcaption class="caption">scene_074.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_083.png" alt="scene 083" />
+      <figcaption class="caption">scene_083.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_090.png" alt="scene 090" />
+      <figcaption class="caption">scene_090.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_102.png" alt="scene 102" />
+      <figcaption class="caption">scene_102.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_116.png" alt="scene 116" />
+      <figcaption class="caption">scene_116.png</figcaption>
+    </figure>
+  </div>
+
+  <h2><span class="num">2.</span>ViT-trained correct, human-trained wrong</h2>
+
+  <pre><code>images [10 16 39 54]</code></pre>
+
+  <div class="image-grid">
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_010.png" alt="scene 010" />
+      <figcaption class="caption">scene_010.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_016.png" alt="scene 016" />
+      <figcaption class="caption">scene_016.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_039.png" alt="scene 039" />
+      <figcaption class="caption">scene_039.png</figcaption>
+    </figure>
+    <figure class="image-card">
+      <img src="../../../thesis/pc_visualization/data_dev/scene_054.png" alt="scene 054" />
+      <figcaption class="caption">scene_054.png</figcaption>
+    </figure>
+  </div>
+
+  <h2><span class="num">3.</span>These are the images where they are both wrong</h2>
+
+  <pre><code>images [  0   1   4  11  21  34  35  36  40  43  44  46  47  51  58  65  66  67
+  84  85 101 104 108 111 117]</code></pre>
+
+  <div class="image-grid">
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_000.png" alt="scene 000" /><figcaption class="caption">scene_000.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_001.png" alt="scene 001" /><figcaption class="caption">scene_001.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_004.png" alt="scene 004" /><figcaption class="caption">scene_004.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_011.png" alt="scene 011" /><figcaption class="caption">scene_011.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_021.png" alt="scene 021" /><figcaption class="caption">scene_021.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_034.png" alt="scene 034" /><figcaption class="caption">scene_034.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_035.png" alt="scene 035" /><figcaption class="caption">scene_035.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_036.png" alt="scene 036" /><figcaption class="caption">scene_036.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_040.png" alt="scene 040" /><figcaption class="caption">scene_040.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_043.png" alt="scene 043" /><figcaption class="caption">scene_043.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_044.png" alt="scene 044" /><figcaption class="caption">scene_044.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_046.png" alt="scene 046" /><figcaption class="caption">scene_046.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_047.png" alt="scene 047" /><figcaption class="caption">scene_047.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_051.png" alt="scene 051" /><figcaption class="caption">scene_051.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_058.png" alt="scene 058" /><figcaption class="caption">scene_058.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_065.png" alt="scene 065" /><figcaption class="caption">scene_065.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_066.png" alt="scene 066" /><figcaption class="caption">scene_066.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_067.png" alt="scene 067" /><figcaption class="caption">scene_067.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_084.png" alt="scene 084" /><figcaption class="caption">scene_084.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_085.png" alt="scene 085" /><figcaption class="caption">scene_085.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_101.png" alt="scene 101" /><figcaption class="caption">scene_101.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_104.png" alt="scene 104" /><figcaption class="caption">scene_104.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_108.png" alt="scene 108" /><figcaption class="caption">scene_108.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_111.png" alt="scene 111" /><figcaption class="caption">scene_111.png</figcaption></figure>
+    <figure class="image-card"><img src="../../../thesis/pc_visualization/data_dev/scene_117.png" alt="scene 117" /><figcaption class="caption">scene_117.png</figcaption></figure>
+  </div>
+</body>
+</html>
