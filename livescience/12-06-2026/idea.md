@@ -83,3 +83,13 @@ The errors decompose like this:
 
 
 
+https://chatgpt.com/g/g-p-6a2afa7480b081918273a455662c7a38-blog/c/6a2c4e0a-e5cc-83ed-a97b-62616545ff5d
+
+
+We can consturct McNemar's matrix out of this error pattern data.
+rows = human-trained decoder wrong/correct
+cols = ViT-trained decoder wrong/correct
+
+                    ViT-trained correct    ViT-trained wrong
+Human-trained correct           78            7
+Human-trained wrong              4           29
