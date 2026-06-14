@@ -75,6 +75,19 @@ is the length of the component of \(x_i\) orthogonal to the animacy direction. I
 
 Thus, \(a_i\) compares the response's signed component along the learned animacy axis against the magnitude of its residual component in the orthogonal neural subspace. The factor \(\sqrt{d-1}\) mirrors the geometry of the classical \(t\)-statistic, where one distinguished direction is compared against \(d-1\) residual directions.
 
+In more simple terms, the equation is:
+
+\[
+t
+=
+\sqrt{\nu}
+\frac{
+\text{component along distinguished direction}
+}{
+\text{orthogonal residual length}
+}
+\]
+
 For each held-out image, we computed a cross-validated hypersphere/t-style angle score. This score compares the signed projection of the held-out neural response vector onto the Adam-learned animacy direction against the magnitude of its component in the orthogonal neural subspace.
 
 The resulting scores separated the two image classes. Inanimate images had a mean angle score of (-3.641405), while animate images had a mean angle score of (+3.429059). The observed animate-minus-inanimate difference was therefore (+7.070464). The AUC of the angle score alone was (0.798099), close to the AUC of the logistic decoder.

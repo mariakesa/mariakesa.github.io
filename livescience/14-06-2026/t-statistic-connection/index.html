@@ -307,6 +307,21 @@ Median axis angle: 36.648414 degrees</code></pre>
     Thus, \(a_i\) compares the response's signed component along the learned animacy axis against the magnitude of its residual component in the orthogonal neural subspace. The factor \(\sqrt{d-1}\) mirrors the geometry of the classical \(t\)-statistic, where one distinguished direction is compared against \(d-1\) residual directions.
   </p>
 
+  <p>In more simple terms, the equation is:</p>
+
+  <div class="eq">
+    \[
+    t
+    =
+    \sqrt{\nu}
+    \frac{
+    \text{component along distinguished direction}
+    }{
+    \text{orthogonal residual length}
+    }
+    \]
+  </div>
+
   <p>
     For each held-out image, we computed a cross-validated hypersphere/t-style angle score. This score compares the signed projection of the held-out neural response vector onto the Adam-learned animacy direction against the magnitude of its component in the orthogonal neural subspace.
   </p>
