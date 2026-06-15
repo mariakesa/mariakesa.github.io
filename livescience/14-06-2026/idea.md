@@ -78,9 +78,9 @@ Thus, \(a_i\) compares the response's signed component along the learned animacy
 In more simple terms, the equation is:
 
 \[
-t
+a_i
 =
-\sqrt{\nu}
+\sqrt{d-1}
 \frac{
 \text{component along distinguished direction}
 }{
