@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neurons as Basis Functions</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --ink: #2a2a2a;
+      --ink-soft: #555;
+      --ink-faint: #888;
+      --rule: #e7e7e2;
+      --accent: #8a3b2e;
+      --bg: #fdfdfb;
+      --code-bg: #1c1d22;
+      --code-fg: #e6e6e6;
+      --measure: 720px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0 auto;
+      max-width: var(--measure);
+      padding: 72px 24px 120px;
+      font-family: "Lora", Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      line-height: 1.7;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    h1, h2, h3 {
+      font-weight: 600;
+      line-height: 1.25;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      margin: 0 0 0.25em;
+    }
+
+    .subtitle {
+      font-style: italic;
+      color: var(--ink-faint);
+      font-size: 1.05rem;
+      margin: 0 0 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin: 3.2rem 0 1rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+    }
+
+    p { margin: 1.15rem 0; }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(138, 59, 46, 0.3);
+      transition: border-color 0.15s ease;
+      word-break: break-word;
+    }
+    a:hover { border-bottom-color: var(--accent); }
+
+    figure {
+      margin: 2.4rem 0;
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    figcaption {
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      color: var(--ink-faint);
+      font-style: italic;
+      text-align: center;
+    }
+
+    code {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    p code, li code {
+      font-size: 0.85em;
+      background: #f0efe9;
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      color: #444;
+    }
+
+    .lang-fr {
+      color: var(--ink-soft);
+    }
+
+    @media (max-width: 600px) {
+      body { font-size: 17px; padding: 48px 18px 80px; }
+      h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Neurons as Basis Functions</h1>
+  <p class="subtitle">Fast pain, slow pain, and the experience of a variable expanded in a biological function basis.</p>
+
+  <figure>
+    <img src="pain.png" alt="Response properties of fast-pain and slow-pain neurons" />
+    <figcaption>Response properties of two neuron types — fast pain and slow pain — from the Coursera Medical Neuroscience course.</figcaption>
+  </figure>
+
+  <p>
+    This is an image from a Coursera Medical Neuroscience course representing the response
+    properties of two different neuron types, one responsible for fast pain and the other for slow
+    pain. The two types of neurons appear to be bump-shaped basis functions for the experience of
+    pain. What we experience is the expansion of a variable (pain) in a biological function basis.
+    At the other side of a sensory coding operation is another layer of neurons that decodes it.
+    Synaptic weights on the input of a neuron are literally projection weights that read out
+    measurements or dimensions of input neural activity. These encode-decode transformations form
+    long chains and they can loop back on themselves (recurrence). They are so dense that they are
+    almost continuous, but between different neurons are tiny gaps&mdash;synapses&mdash;that are
+    probabilistic. The synapse is a low-pass filter. I can't sleep tonight.
+  </p>
+
+  <p class="lang-fr">
+    Voici une image tirée du cours <em>Medical Neuroscience</em> de Coursera, représentant les
+    propriétés de réponse de deux types différents de neurones : l'un responsable de la douleur
+    rapide, l'autre de la douleur lente.
+  </p>
+
+  <p class="lang-fr">
+    Ces deux types de neurones semblent être des <em>fonctions de base en forme de bosse</em> pour
+    l'expérience de la douleur. Ce que nous ressentons serait alors l'<em>expansion d'une
+    variable</em> &mdash; la douleur &mdash; dans une base fonctionnelle biologique.
+  </p>
+
+  <p class="lang-fr">
+    De l'autre côté d'une opération de codage sensoriel se trouve une autre couche de neurones qui
+    la décode. Les poids synaptiques à l'entrée d'un neurone sont littéralement des <em>poids de
+    projection</em> qui lisent des mesures ou des dimensions de l'activité neuronale entrante.
+  </p>
+
+  <p class="lang-fr">
+    Ces transformations d'encodage et de décodage forment de longues chaînes, et elles peuvent se
+    reboucler sur elles-mêmes &mdash; c'est la récurrence. Elles sont si denses qu'elles sont
+    presque continues, mais entre les différents neurones se trouvent de minuscules espaces : les
+    synapses, qui sont probabilistes.
+  </p>
+
+  <p class="lang-fr">La synapse est un filtre passe-bas.</p>
+
+  <p class="lang-fr">Je n'arrive pas à dormir ce soir.</p>
+</body>
+</html>
