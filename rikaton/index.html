@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="et">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Brauseris töötav semantiline otsing ligipääsetavuse seire teadmistebaasis.">
+  <title>Ligipääsetavuse semantiline otsing</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <p class="eyebrow">Prototype · local semantic search</p>
+      <h1>Ligipääsetavuse teadmistebaas</h1>
+      <p class="lede">Küsi loomulikus eesti keeles. Otsing töötab sinu brauseris <strong>multilingual-e5-small</strong> mudeliga.</p>
+    </header>
+
+    <section class="search-panel" aria-labelledby="search-heading">
+      <h2 id="search-heading" class="sr-only">Semantiline otsing</h2>
+      <form id="search-form">
+        <label for="query">Küsimus või probleem</label>
+        <div class="search-row">
+          <input id="query" name="query" type="search" autocomplete="off"
+            placeholder="nt miks ei saa tabiga sisselogimisaknasse?" required>
+          <button id="search-button" type="submit">Otsi</button>
+        </div>
+      </form>
+
+      <div class="examples" aria-label="Näidisküsimused">
+        <button type="button" class="example">Miks ei saa klaviatuuriga sisselogimisaknasse?</button>
+        <button type="button" class="example">Ekraaniluger ei ütle, kas menüü on avatud</button>
+        <button type="button" class="example">Kas ostukorvi lehe pealkiri on vale?</button>
+        <button type="button" class="example">Teksti kontrast on liiga madal</button>
+      </div>
+
+      <div id="status" class="status" role="status" aria-live="polite">Mudel laaditakse esimesel otsingul.</div>
+    </section>
+
+    <section aria-labelledby="results-heading">
+      <div class="results-head">
+        <h2 id="results-heading">Tulemused</h2>
+        <label class="toggle">
+          <input id="mv-only" type="checkbox" checked>
+          <span>Näita ainult auditis leitud mittevastavusi</span>
+        </label>
+      </div>
+      <div id="results" class="results">
+        <p class="empty">Sisesta küsimus, et otsida teadmistebaasist.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>Allikmaterjal ja AI loodud selgitused on tulemustes eraldi märgistatud. Päringut ega teadmistebaasi teksti ei saadeta OpenAI-le ega muule API-le.</p>
+    </footer>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
