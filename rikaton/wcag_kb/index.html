@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>WCAG 2.2 Knowledge Viewer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow" id="uiEyebrow">Prototype knowledge viewer</div>
+      <h1 id="uiTitle">WCAG 2.2 Explorer</h1>
+      <p id="uiIntro">Browse the corpus by criterion, supporting document, and section.</p>
+    </div>
+    <div class="top-actions">
+      <div class="language-switch" role="group" aria-label="Language">
+        <button id="langEn" type="button" class="lang-button active" aria-pressed="true">English</button>
+        <button id="langEt" type="button" class="lang-button" aria-pressed="false">Eesti</button>
+      </div>
+      <div class="stats" aria-live="polite">
+      <span id="chunkCount">— chunks</span>
+      <span id="resultCount">— shown</span>
+    </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <label class="search-label" id="uiSearchLabel" for="search">Search material</label>
+      <input id="search" type="search"
+             placeholder="e.g. aria-label, keyboard focus, 1.1.1, G94"
+             autocomplete="off">
+
+      <div class="filter-block">
+        <label id="uiCriterionLabel" for="criterionFilter">WCAG criterion</label>
+        <select id="criterionFilter">
+          <option value="">All criteria</option>
+        </select>
+      </div>
+
+      <div class="filter-block">
+        <label id="uiTypeLabel" for="typeFilter">Document type</label>
+        <select id="typeFilter">
+          <option value="">All document types</option>
+        </select>
+      </div>
+
+      <div class="filter-block">
+        <label id="uiReferenceLabel" for="referenceFilter">Reference</label>
+        <select id="referenceFilter">
+          <option value="">All references</option>
+        </select>
+      </div>
+
+      <div class="filter-block">
+        <label id="uiSectionLabel" for="sectionFilter">Section</label>
+        <select id="sectionFilter">
+          <option value="">All sections</option>
+        </select>
+      </div>
+
+      <button id="clearFilters" type="button" class="secondary"><span id="uiClear">Clear filters</span></button>
+
+      <div class="legend">
+        <h2 id="uiStructureTitle">Corpus structure</h2>
+        <p><strong>Criterion</strong> = WCAG success criterion text.</p>
+        <p><strong>Understanding</strong> = explanatory W3C material.</p>
+        <p><strong>Technique</strong> = implementation/test guidance.</p>
+        <p><strong>Failure</strong> = documented failure pattern.</p>
+      </div>
+    </aside>
+
+    <section class="browser">
+      <div class="results-head">
+        <div>
+          <h2 id="resultsTitle">Material</h2>
+          <p id="resultsSubtitle">Loading…</p>
+        </div>
+        <select id="sortMode" aria-label="Sort results">
+          <option value="relevance">Sort: relevance</option>
+          <option value="wcag">Sort: WCAG</option>
+          <option value="type">Sort: document type</option>
+        </select>
+      </div>
+
+      <div id="results" class="results" aria-live="polite"></div>
+      <button id="loadMore" type="button" class="load-more" hidden>Show more</button>
+    </section>
+
+    <article class="reader" id="reader">
+      <div class="empty-reader" id="emptyReader">
+        <div class="empty-icon">↗</div>
+        <h2 id="uiSelectSection">Select a section</h2>
+        <p id="uiEmptyText">The original W3C text, metadata, and source link will appear here.</p>
+      </div>
+
+      <div id="readerContent" hidden>
+        <div class="reader-meta-row">
+          <span id="readerType" class="pill"></span>
+          <span id="readerLevel" class="pill muted-pill"></span>
+        </div>
+        <h2 id="readerTitle"></h2>
+        <div id="readerReference" class="reference-line"></div>
+        <h3 id="readerSection"></h3>
+        <div id="readerText" class="reader-text"></div>
+
+        <section id="imageWorkspace" class="image-workspace">
+          <div class="workspace-heading">
+            <div>
+              <h3 id="uiImagesTitle">Session images</h3>
+              <p id="uiImagesHelp">Add screenshots or examples to this section. They stay while this page is open and disappear after refresh.</p>
+            </div>
+            <label class="image-add-button" for="imageInput" id="uiAddImages">+ Add images</label>
+            <input id="imageInput" class="visually-hidden" type="file" accept="image/*" multiple>
+          </div>
+          <div id="imageDropZone" class="image-drop-zone" tabindex="0">
+            <span id="uiDropImages">Drop images here, paste from clipboard, or use Add images.</span>
+          </div>
+          <div id="imageGallery" class="image-gallery"></div>
+        </section>
+
+        <div class="provenance">
+          <h3 id="uiProvenanceTitle">Provenance</h3>
+          <dl>
+            <div><dt id="uiProvWcag">WCAG</dt><dd id="provWcag"></dd></div>
+            <div><dt id="uiProvDoc">Document</dt><dd id="provDoc"></dd></div>
+            <div><dt id="uiProvSection">Section</dt><dd id="provSection"></dd></div>
+            <div><dt id="uiProvRelated">Related criteria</dt><dd id="provRelated"></dd></div>
+          </dl>
+          <div class="link-row">
+          <a id="sourceLink" href="#" target="_blank" rel="noopener"><span id="uiSourceLink">Open original W3C source ↗</span></a>
+          <a id="permalink" href="#"><span id="uiPermalink">Permalink to this section</span></a>
+        </div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
